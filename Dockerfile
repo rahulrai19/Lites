@@ -1,46 +1,29 @@
 # syntax=docker/dockerfile:1
-
-# ---- Base ----------------------------------------------------------------
-# Pinned major+minor, not just major, so a base image rebuild doesn't
-# silently change Node's minor version under us.
-FROM node:20.18-slim AS base
-RUN npm install -g pnpm@9.12.0
+FROM python:3.12-slim AS base
 WORKDIR /app
 
 # ---- Dependencies ----------------------------------------------------------
-# Cached separately from source so `pnpm install` only reruns when
-# package.json / lockfile actually change, not on every code edit.
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-# ---- Build -----------------------------------------------------------------
-FROM base AS build
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json pnpm-lock.yaml tsconfig.json ./
-COPY src ./src
-RUN pnpm build
-
-# Install only production dependencies for the final stage.
-RUN pnpm install --frozen-lockfile --prod
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 # ---- Runtime -----------------------------------------------------------------
-FROM node:20.18-slim AS runtime
+FROM base AS runtime
 ENV NODE_ENV=production
+ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
-# Run as a non-root user; slim images ship a "node" user by default.
-USER node
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
 
-COPY --chown=node:node --from=build /app/node_modules ./node_modules
-COPY --chown=node:node --from=build /app/dist ./dist
-COPY --chown=node:node package.json ./
+COPY --from=deps /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=deps /usr/local/bin /usr/local/bin
+
+COPY --chown=appuser:appuser . ./
 
 EXPOSE 3000
 
-# Container-level health check independent of any orchestrator's own probe
-# config, so `docker ps` and `docker inspect` reflect real service health.
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD python -c "import urllib.request, os; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"PORT\", 3000)}/health')" || exit 1
 
-CMD ["node", "dist/server.js"]
+CMD ["python", "-m", "src.server"]
