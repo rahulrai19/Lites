@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
-from src.config.env import env
-from src.core.health import router as health_router
+from app.config.env import env
+from app.core.health import router as health_router
 
 def build_app() -> FastAPI:
     app = FastAPI(title="Lites")

@@ -1,8 +1,8 @@
 import time
 import tiktoken
 import re
-from src.tokenizer.types import TokenCounter, TokenCountResult
-from src.tokenizer.errors import InvalidModelNameError, TokenizerError
+from app.tokenizer.types import TokenCounter, TokenCountResult
+from app.tokenizer.errors import InvalidModelNameError, TokenizerError
 
 VALID_MODEL_NAME = re.compile(r"^[a-zA-Z0-9._-]+$")
 

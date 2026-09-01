@@ -1,6 +1,6 @@
 import pytest
-from src.tokenizer.openai_tokenizer import OpenAITokenizer
-from src.tokenizer.errors import InvalidModelNameError, TokenizerError
+from app.tokenizer.openai_tokenizer import OpenAITokenizer
+from app.tokenizer.errors import InvalidModelNameError, TokenizerError
 
 @pytest.fixture
 def tokenizer():

@@ -1,7 +1,7 @@
 import pytest
-from src.tokenizer.registry import TokenizerRegistry
-from src.tokenizer.errors import UnsupportedProviderError
-from src.tokenizer.types import TokenCounter, TokenCountResult
+from app.tokenizer.registry import TokenizerRegistry
+from app.tokenizer.errors import UnsupportedProviderError
+from app.tokenizer.types import TokenCounter, TokenCountResult
 
 class FakeTokenCounter(TokenCounter):
     def __init__(self, provider: str):

@@ -1,9 +1,10 @@
 import uvicorn
-from src.config.env import env
+from app.config.env import env
+from app.core.app import app
 
 if __name__ == "__main__":
     uvicorn.run(
-        "src.core.app:app",
+        "app.main:app",
         host=env.HOST,
         port=env.PORT,
         reload=(env.NODE_ENV == "development")
