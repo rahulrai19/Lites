@@ -16,9 +16,10 @@ class DecisionResult:
     reason: str
 
 class DecisionEngine:
-    def __init__(self, min_tokens: Optional[int] = None, max_tokens: Optional[int] = None):
+    def __init__(self, min_tokens: Optional[int] = None, max_tokens: Optional[int] = None, ai_threshold: Optional[int] = None):
         self.min_tokens = min_tokens if min_tokens is not None else env.MIN_TOKENS_FOR_OPTIMIZATION
         self.max_tokens = max_tokens if max_tokens is not None else env.MAX_TOKENS_FOR_OPTIMIZATION
+        self.ai_threshold = ai_threshold if ai_threshold is not None else env.AI_OPTIMIZE_THRESHOLD
 
     def evaluate(self, token_count: int) -> DecisionResult:
         """
@@ -37,8 +38,13 @@ class DecisionEngine:
                 reason=f"Token count ({token_count}) exceeds the maximum threshold ({self.max_tokens}) for safe optimization."
             )
             
-        # Default to RULE_OPTIMIZE for now, as AI/Context optimization are future phases
+        if token_count > self.ai_threshold:
+            return DecisionResult(
+                action=OptimizationAction.AI_OPTIMIZE,
+                reason=f"Token count ({token_count}) exceeds the AI threshold ({self.ai_threshold}). Applying aggressive AI compression."
+            )
+            
         return DecisionResult(
             action=OptimizationAction.RULE_OPTIMIZE,
-            reason=f"Token count ({token_count}) is within thresholds. Applying deterministic rules."
+            reason=f"Token count ({token_count}) is within standard thresholds. Applying deterministic rules."
         )

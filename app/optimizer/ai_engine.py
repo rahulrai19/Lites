@@ -1,0 +1,85 @@
+import time
+import httpx
+from typing import Tuple, Optional
+from app.models.optimization import OptimizationMetadata
+from app.models.context import ContextProfile
+from app.tokenizer.types import TokenCounter
+from app.config.env import env
+
+class AIOptimizerEngine:
+    def __init__(self, token_counter: TokenCounter):
+        self.token_counter = token_counter
+        self.system_prompt = (
+            "Compress the following text aggressively while preserving all semantic meaning, "
+            "intent, and facts. Return ONLY the compressed text. Do not add conversational filler."
+        )
+
+    async def optimize(self, prompt: str, model: str = "o200k_base", context: Optional[ContextProfile] = None) -> Tuple[str, OptimizationMetadata]:
+        """
+        Calls an LLM to rewrite and compress the prompt.
+        If the resulting prompt is larger than the original, or if the API fails, 
+        it safely falls back to returning the original prompt.
+        """
+        start_time = time.perf_counter()
+        
+        # Count original tokens
+        count_before_result = await self.token_counter.count_tokens(prompt, model)
+        tokens_before = count_before_result.token_count
+        
+        compressed_prompt = prompt
+        operations_applied = []
+        
+        # Ensure API key is set
+        if not env.OPENAI_API_KEY:
+            # Fallback safely if no key
+            pass
+        else:
+            try:
+                # Call OpenAI API to compress
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        "https://api.openai.com/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {env.OPENAI_API_KEY}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": "gpt-4o-mini",
+                            "messages": [
+                                {"role": "system", "content": self.system_prompt},
+                                {"role": "user", "content": prompt}
+                            ],
+                            "temperature": 0.1
+                        },
+                        timeout=10.0
+                    )
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        candidate_prompt = data["choices"][0]["message"]["content"].strip()
+                        
+                        # Verify we actually saved tokens
+                        count_after_result = await self.token_counter.count_tokens(candidate_prompt, model)
+                        if count_after_result.token_count < tokens_before:
+                            compressed_prompt = candidate_prompt
+                            operations_applied.append("ai_compression")
+            except Exception:
+                # Catch any network or parsing errors and fail open (use original prompt)
+                pass
+
+        # Calculate final tokens after verification
+        count_after_result = await self.token_counter.count_tokens(compressed_prompt, model)
+        tokens_after = count_after_result.token_count
+        
+        savings = tokens_before - tokens_after
+        elapsed_ms = (time.perf_counter() - start_time) * 1000
+        
+        metadata = OptimizationMetadata(
+            original_tokens=tokens_before,
+            optimized_tokens=tokens_after,
+            tokens_saved=savings,
+            latency_ms=elapsed_ms,
+            operations_applied=operations_applied
+        )
+        
+        return compressed_prompt, metadata
