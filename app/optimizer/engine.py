@@ -1,6 +1,7 @@
 import time
-from typing import List, Callable, Tuple
+from typing import List, Callable, Tuple, Optional
 from app.models.optimization import OptimizationMetadata
+from app.models.context import ContextProfile, CONTEXT_PROFILES
 from app.optimizer.rules import (
     normalize_whitespace,
     normalize_line_endings,
@@ -20,12 +21,17 @@ class RuleOptimizerEngine:
             remove_fillers
         ]
 
-    async def optimize(self, prompt: str, model: str = "o200k_base") -> Tuple[str, OptimizationMetadata]:
+    async def optimize(self, prompt: str, model: str = "o200k_base", context: Optional[ContextProfile] = None) -> Tuple[str, OptimizationMetadata]:
         """
         Runs a prompt through the deterministic rule pipeline.
+        Filters rules based on the provided ContextProfile to ensure safety.
         Measures tokens before and after, calculating the net savings.
         """
         start_time = time.perf_counter()
+        
+        # Resolve context mapping
+        current_context = context if context is not None else ContextProfile.DEFAULT
+        context_mapping = CONTEXT_PROFILES[current_context]
         
         # Count tokens before
         count_before_result = await self.token_counter.count_tokens(prompt, model)
@@ -36,6 +42,10 @@ class RuleOptimizerEngine:
         applied_operations = []
         
         for rule in self.rules:
+            # Skip disabled rules for this context
+            if rule.__name__ in context_mapping.disabled_rules:
+                continue
+                
             try:
                 new_prompt, modified = rule(current_prompt)
                 if modified:
