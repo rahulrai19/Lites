@@ -24,7 +24,12 @@ export function Dashboard() {
     // Poll metrics every 2 seconds
     const fetchMetrics = async () => {
       try {
-        const response = await fetch('/v1/lites/metrics');
+        const apiKey = import.meta.env.VITE_LITES_API_KEY || 'test-lites-key';
+        const response = await fetch('/v1/lites/metrics', {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           setMetrics(data);

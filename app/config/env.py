@@ -21,6 +21,9 @@ class Env(BaseSettings):
     REDIS_URL: Optional[str] = None
     CACHE_TTL_SECONDS: int = 3600
     
+    # Authentication
+    LITES_API_KEY: Optional[str] = None
+    
     # Semantic Cache configuration
     SEMANTIC_CACHE_THRESHOLD: float = 0.95
 
