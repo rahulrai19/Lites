@@ -1,6 +1,6 @@
 from typing import Dict, List
-from src.tokenizer.types import TokenCounter
-from src.tokenizer.errors import UnsupportedProviderError
+from app.tokenizer.types import TokenCounter
+from app.tokenizer.errors import UnsupportedProviderError
 
 class TokenizerRegistry:
     def __init__(self):
