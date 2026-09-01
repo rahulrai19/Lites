@@ -1,5 +1,6 @@
 from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
 
 class Env(BaseSettings):
     NODE_ENV: Literal["development", "test", "production"] = "development"
@@ -15,6 +16,10 @@ class Env(BaseSettings):
     # AI Optimization configuration
     AI_OPTIMIZE_THRESHOLD: int = 500
     OPENAI_API_KEY: str = ""
+    
+    # Redis configuration
+    REDIS_URL: Optional[str] = None
+    CACHE_TTL_SECONDS: int = 3600
     
     # Semantic Cache configuration
     SEMANTIC_CACHE_THRESHOLD: float = 0.95

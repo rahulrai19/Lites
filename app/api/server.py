@@ -7,7 +7,9 @@ from app.core.engine import LitesCoreEngine
 from app.core.multiplexer import HTTPMultiplexer
 from app.cache.memory import InMemoryCache
 from app.cache.semantic import InMemorySemanticCache
+from app.cache.redis_backend import RedisCache, RedisSemanticCache
 from app.cache.embedder import Embedder
+from app.config.env import env
 from app.tokenizer.openai_tokenizer import OpenAITokenizer
 from app.optimizer.decision import DecisionEngine
 from app.optimizer.engine import RuleOptimizerEngine
@@ -23,8 +25,15 @@ telemetry: TelemetryTracker = None
 async def lifespan(app: FastAPI):
     global engine, telemetry
     # Initialize components
-    exact_cache = InMemoryCache()
-    semantic_cache = InMemorySemanticCache()
+    if env.REDIS_URL:
+        exact_cache = RedisCache(env.REDIS_URL)
+        semantic_cache = RedisSemanticCache(env.REDIS_URL)
+        print("🚀 Lites is running with persistent Redis Cache!")
+    else:
+        exact_cache = InMemoryCache()
+        semantic_cache = InMemorySemanticCache()
+        print("⚠️ Lites is running with InMemory Cache (Not recommended for production).")
+        
     embedder = Embedder()
     tokenizer = OpenAITokenizer()
     rule_engine = RuleOptimizerEngine(tokenizer)
