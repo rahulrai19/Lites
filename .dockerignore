@@ -6,7 +6,6 @@ coverage
 .env
 .env.*
 !.env.example
-tests
 docs
 examples
 *.md
