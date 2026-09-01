@@ -11,6 +11,10 @@ class Env(BaseSettings):
     # Optimization Thresholds
     MIN_TOKENS_FOR_OPTIMIZATION: int = 50
     MAX_TOKENS_FOR_OPTIMIZATION: int = 128000
+    
+    # AI Optimization configuration
+    AI_OPTIMIZE_THRESHOLD: int = 500
+    OPENAI_API_KEY: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",
