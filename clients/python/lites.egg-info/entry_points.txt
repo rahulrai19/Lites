@@ -1,0 +1,2 @@
+[console_scripts]
+lites = lites.cli:app
