@@ -56,3 +56,15 @@ def test_chat_completions_invalid_context():
         # It should fallback to DEFAULT internally and succeed
         data = response.json()
         assert data["choices"][0]["message"]["content"] == "Mocked API Response"
+
+def test_lites_metrics_endpoint():
+    with TestClient(app) as client:
+        response = client.get("/v1/lites/metrics")
+        assert response.status_code == 200
+        data = response.json()
+        assert "total_requests" in data
+        assert "exact_cache_hits" in data
+        assert "semantic_cache_hits" in data
+        assert "tokens_saved_by_rules" in data
+        assert "tokens_saved_by_ai" in data
+        assert "total_optimization_overhead_ms" in data

@@ -13,13 +13,15 @@ from app.optimizer.decision import DecisionEngine
 from app.optimizer.engine import RuleOptimizerEngine
 from app.optimizer.ai_engine import AIOptimizerEngine
 from app.models.context import ContextProfile
+from app.telemetry.tracker import TelemetryTracker, TelemetryMetrics
 
-# Global engine instance
+# Global engine and telemetry instances
 engine: LitesCoreEngine = None
+telemetry: TelemetryTracker = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global engine
+    global engine, telemetry
     # Initialize components
     exact_cache = InMemoryCache()
     semantic_cache = InMemorySemanticCache()
@@ -29,6 +31,7 @@ async def lifespan(app: FastAPI):
     ai_engine = AIOptimizerEngine(tokenizer)
     decision_engine = DecisionEngine()
     multiplexer = HTTPMultiplexer()
+    telemetry = TelemetryTracker()
     
     engine = LitesCoreEngine(
         exact_cache=exact_cache,
@@ -38,7 +41,8 @@ async def lifespan(app: FastAPI):
         rule_engine=rule_engine,
         ai_engine=ai_engine,
         decision_engine=decision_engine,
-        llm_client=multiplexer
+        llm_client=multiplexer,
+        telemetry=telemetry
     )
     yield
     # Cleanup if necessary
@@ -81,3 +85,9 @@ async def chat_completions(request: ChatCompletionRequest, response: Response):
         ],
         usage=Usage()
     )
+
+@app.get("/v1/lites/metrics", response_model=TelemetryMetrics)
+async def get_metrics():
+    if telemetry:
+        return telemetry.get_metrics()
+    return TelemetryMetrics()

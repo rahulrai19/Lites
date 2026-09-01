@@ -14,6 +14,7 @@ from app.optimizer.ai_engine import AIOptimizerEngine
 from app.models.context import ContextProfile
 from app.tokenizer.types import TokenCounter
 from app.core.client import LLMClient
+from app.telemetry.tracker import TelemetryTracker
 
 class LitesCoreEngine:
     def __init__(
@@ -25,7 +26,8 @@ class LitesCoreEngine:
         rule_engine: RuleOptimizerEngine,
         ai_engine: AIOptimizerEngine,
         decision_engine: DecisionEngine,
-        llm_client: LLMClient
+        llm_client: LLMClient,
+        telemetry: Optional[TelemetryTracker] = None
     ):
         self.exact_cache = exact_cache
         self.semantic_cache = semantic_cache
@@ -35,6 +37,7 @@ class LitesCoreEngine:
         self.ai_engine = ai_engine
         self.decision_engine = decision_engine
         self.llm_client = llm_client
+        self.telemetry = telemetry
 
     async def execute(self, prompt: str, model: str, context: Optional[ContextProfile] = None) -> str:
         """
@@ -47,9 +50,14 @@ class LitesCoreEngine:
         6. Store Result in Cache
         """
         # --- 1. Exact Cache Check ---
+        if self.telemetry:
+            await self.telemetry.record_request()
+            
         prompt_hash = hash_prompt(prompt, model)
         exact_hit = await self.exact_cache.get(prompt_hash)
         if exact_hit:
+            if self.telemetry:
+                await self.telemetry.record_exact_cache_hit()
             return exact_hit.response
 
         # --- 2. Semantic Cache Check ---
@@ -57,6 +65,8 @@ class LitesCoreEngine:
         if embedding:
             semantic_hit = await self.semantic_cache.search(embedding, model)
             if semantic_hit:
+                if self.telemetry:
+                    await self.telemetry.record_semantic_cache_hit()
                 return semantic_hit.response
 
         # --- 3. Token Counting & Decision ---
@@ -67,10 +77,19 @@ class LitesCoreEngine:
         # --- 4. Optimization ---
         optimized_prompt = prompt
         
+        start_opt_time = time.time()
         if decision.action == OptimizationAction.RULE_OPTIMIZE:
-            optimized_prompt, _ = await self.rule_engine.optimize(prompt, model, context)
+            optimized_prompt, metadata = await self.rule_engine.optimize(prompt, model, context)
+            if self.telemetry:
+                await self.telemetry.record_rule_savings(metadata.tokens_saved)
         elif decision.action == OptimizationAction.AI_OPTIMIZE:
-            optimized_prompt, _ = await self.ai_engine.optimize(prompt, model, context)
+            optimized_prompt, metadata = await self.ai_engine.optimize(prompt, model, context)
+            if self.telemetry:
+                await self.telemetry.record_ai_savings(metadata.tokens_saved)
+                
+        if self.telemetry and decision.action != OptimizationAction.SKIP:
+            overhead_ms = int((time.time() - start_opt_time) * 1000)
+            await self.telemetry.record_overhead(overhead_ms)
             
         # --- 5. Execute via LLM Client ---
         # Note: Lites signature metadata will be appended to the user prompt in the final proxy (Phase 9)
