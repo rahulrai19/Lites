@@ -74,12 +74,18 @@ class AIOptimizerEngine:
         savings = tokens_before - tokens_after
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         
+        savings_pct = (savings / tokens_before * 100) if tokens_before > 0 else 0.0
+        
         metadata = OptimizationMetadata(
-            original_tokens=tokens_before,
-            optimized_tokens=tokens_after,
+            original_prompt=prompt,
+            optimized_prompt=compressed_prompt,
+            tokens_before=tokens_before,
+            tokens_after=tokens_after,
             tokens_saved=savings,
-            latency_ms=elapsed_ms,
-            operations_applied=operations_applied
+            savings_percentage=savings_pct,
+            operations_applied=operations_applied,
+            optimization_applied=len(operations_applied) > 0,
+            processing_time_ms=elapsed_ms
         )
         
         return compressed_prompt, metadata
