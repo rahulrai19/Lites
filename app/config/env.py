@@ -7,6 +7,10 @@ class Env(BaseSettings):
     PORT: int = 3000
     LOG_LEVEL: Literal["fatal", "error", "warn", "info", "debug", "trace", "silent"] = "info"
     SHUTDOWN_TIMEOUT_MS: int = 10000
+    
+    # Optimization Thresholds
+    MIN_TOKENS_FOR_OPTIMIZATION: int = 50
+    MAX_TOKENS_FOR_OPTIMIZATION: int = 128000
 
     model_config = SettingsConfigDict(
         env_file=".env",
