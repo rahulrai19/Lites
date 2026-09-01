@@ -1,0 +1,26 @@
+{
+  "name": "lites",
+  "version": "0.1.0",
+  "description": "Official Node.js SDK for Lites - The lightning-fast AI proxy",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "lites",
+    "openai",
+    "proxy",
+    "llm",
+    "cache"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
