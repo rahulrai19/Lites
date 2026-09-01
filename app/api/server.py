@@ -1,8 +1,9 @@
 import time
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, Depends
 from contextlib import asynccontextmanager
 
 from app.api.models import ChatCompletionRequest, ChatCompletionResponse, Choice, ChoiceMessage, Usage
+from app.api.auth import verify_api_key
 from app.core.engine import LitesCoreEngine
 from app.core.multiplexer import HTTPMultiplexer
 from app.cache.memory import InMemoryCache
@@ -58,7 +59,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Lites Proxy API", lifespan=lifespan)
 
-@app.post("/v1/chat/completions", response_model=ChatCompletionResponse)
+@app.post("/v1/chat/completions", response_model=ChatCompletionResponse, dependencies=[Depends(verify_api_key)])
 async def chat_completions(request: ChatCompletionRequest, response: Response):
     # Combine messages into a single string for optimization
     # In a real production proxy, we would preserve message boundaries.
@@ -95,7 +96,7 @@ async def chat_completions(request: ChatCompletionRequest, response: Response):
         usage=Usage()
     )
 
-@app.get("/v1/lites/metrics", response_model=TelemetryMetrics)
+@app.get("/v1/lites/metrics", response_model=TelemetryMetrics, dependencies=[Depends(verify_api_key)])
 async def get_metrics():
     if telemetry:
         return telemetry.get_metrics()
