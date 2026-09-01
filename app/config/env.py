@@ -15,6 +15,9 @@ class Env(BaseSettings):
     # AI Optimization configuration
     AI_OPTIMIZE_THRESHOLD: int = 500
     OPENAI_API_KEY: str = ""
+    
+    # Semantic Cache configuration
+    SEMANTIC_CACHE_THRESHOLD: float = 0.95
 
     model_config = SettingsConfigDict(
         env_file=".env",
