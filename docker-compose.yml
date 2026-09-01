@@ -1,22 +1,46 @@
+version: '3.8'
+
 services:
-  lites:
+  # The Redis cache for exactly matching and semantic similarity
+  redis:
+    image: redis:alpine
+    container_name: lites-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # The Lites Python Proxy API
+  lites-proxy:
     build:
       context: .
-      target: runtime
-    image: lites:local
+      dockerfile: Dockerfile
+    container_name: lites-proxy
     ports:
-      - '3000:3000'
-    environment:
-      NODE_ENV: production
-      PORT: '3000'
-      LOG_LEVEL: info
+      - "8000:8000"
     env_file:
-      - path: .env
-        required: false
+      - .env
+    environment:
+      # Override Redis URL to point to the docker network container name
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3000/health')"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
+
+  # The React Dashboard running on Nginx
+  lites-dashboard:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lites-dashboard
+    ports:
+      - "5173:80"  # Expose Nginx on port 5173 to match Vite's default dev port
+    env_file:
+      - .env
+    depends_on:
+      - lites-proxy
+    restart: unless-stopped
+
+volumes:
+  redis_data:

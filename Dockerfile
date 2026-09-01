@@ -1,34 +1,26 @@
-# syntax=docker/dockerfile:1
-FROM python:3.12-slim AS base
+FROM python:3.11-slim
+
 WORKDIR /app
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Install system dependencies if required
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# ---- Dependencies ----------------------------------------------------------
-FROM base AS deps
-COPY pyproject.toml .
-# Create a virtual environment and install dependencies (including dev groups)
-RUN uv venv && uv sync --no-install-project
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
 
-# ---- Runtime -----------------------------------------------------------------
-FROM base AS runtime
-ENV NODE_ENV=production
-ENV PYTHONUNBUFFERED=1
-ENV PATH="/app/.venv/bin:$PATH"
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
+# Copy the rest of the backend source code
+COPY . .
 
-# Copy the virtual environment from the deps stage
-COPY --from=deps --chown=appuser:appuser /app/.venv /app/.venv
+# Ensure Lites package is importable
+ENV PYTHONPATH=/app
 
-# Copy the rest of the application
-COPY --chown=appuser:appuser . ./
+# Expose the API port
+EXPOSE 8000
 
-EXPOSE 3000
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD python -c "import urllib.request, os; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"PORT\", 3000)}/health')" || exit 1
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3000"]
+# Start the FastAPI server using Uvicorn
+CMD ["uvicorn", "app.api.server:app", "--host", "0.0.0.0", "--port", "8000"]
