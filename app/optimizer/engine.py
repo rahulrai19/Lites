@@ -45,7 +45,6 @@ class RuleOptimizerEngine:
             # Skip disabled rules for this context
             if rule.__name__ in context_mapping.disabled_rules:
                 continue
-                
             try:
                 new_prompt, modified = rule(current_prompt)
                 if modified:

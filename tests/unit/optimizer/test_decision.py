@@ -22,7 +22,7 @@ def test_applies_rule_optimize_within_thresholds():
     result = engine.evaluate(100)
     
     assert result.action == OptimizationAction.RULE_OPTIMIZE
-    assert "within thresholds" in result.reason
+    assert "within standard thresholds" in result.reason
 
 def test_uses_environment_variables_by_default():
     # Because we mocked/imported the env singleton, 
@@ -35,8 +35,8 @@ def test_uses_environment_variables_by_default():
     # 50 should rule optimize
     assert engine.evaluate(50).action == OptimizationAction.RULE_OPTIMIZE
     
-    # 100000 should rule optimize
-    assert engine.evaluate(100000).action == OptimizationAction.RULE_OPTIMIZE
+    # 100000 should trigger AI optimize (since default AI threshold is 500)
+    assert engine.evaluate(100000).action == OptimizationAction.AI_OPTIMIZE
     
     # 130000 should skip
     assert engine.evaluate(130000).action == OptimizationAction.SKIP
