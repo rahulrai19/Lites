@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { Documentation } from './components/Documentation';
 import { Sidebar } from './components/Sidebar';
-import { FlowchartAnimation } from './components/FlowchartAnimation';
+import { DetailedFlowchart } from './components/DetailedFlowchart';
 import './index.css';
 
 function App() {
@@ -48,10 +48,41 @@ function App() {
       <main className={activeTab === 'dashboard' ? "main-content" : "docs-layout"}>
         {activeTab === 'dashboard' ? (
           <>
-            <Dashboard />
+            {/* Hero Section */}
+            <div className="hero-section" style={{ gridColumn: '1 / -1' }}>
+              <h1 className="hero-title">Welcome to Lites</h1>
+              <p className="hero-subtitle">
+                The fastest way to optimize your LLM costs and latency with exact caching, semantic caching, and AI compression.
+              </p>
+              <div className="hero-actions">
+                <button className="pill-btn" onClick={() => setActiveTab('docs')}>
+                  How to use?
+                </button>
+                <div className="pill-code">
+                  <span className="pkg-mgr">NPM</span>
+                  <code>npm i lites-sdk</code>
+                </div>
+                <div className="pill-code">
+                  <span className="pkg-mgr">PyPI</span>
+                  <code>pip install lites</code>
+                </div>
+              </div>
+            </div>
+
+            {/* Left Column */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <FlowchartAnimation />
-              <Documentation activeSection="Integration Guide" hideSidebar={true} />
+              <Dashboard />
+              <div style={{ marginTop: '2rem' }}>
+                <Documentation activeSection="Integration Guide" hideSidebar={true} stepRange={[1, 2]} />
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <DetailedFlowchart />
+              <div style={{ marginTop: '2rem', paddingLeft: '1rem' }}>
+                <Documentation activeSection="Integration Guide" hideSidebar={true} stepRange={[3, 4]} hideTitle={true} />
+              </div>
             </div>
           </>
         ) : (
@@ -61,7 +92,7 @@ function App() {
               activeSection={activeSection}
               setActiveSection={setActiveSection}
             />
-            <div style={{ paddingTop: '1.5rem' }}>
+            <div style={{ padding: '2rem 4rem', maxWidth: '1100px', width: '100%', margin: '0 auto' }}>
               <Documentation activeSection={activeSection} />
             </div>
           </>

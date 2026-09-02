@@ -1,0 +1,83 @@
+.detailed-flowchart-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  margin-top: 1.5rem;
+}
+
+.flowchart-header h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.flowchart-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot-green { background-color: #1eb854; }
+.dot-yellow { background-color: #ffbd2e; }
+.dot-red { background-color: #ff416c; }
+.dot-gray { background-color: #666; }
+
+.svg-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.flowchart-svg-main {
+  width: 100%;
+  height: auto;
+  max-height: 1200px;
+}
+
+/* Node Hover Effects */
+.flow-node {
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.flow-node:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.flow-node:hover rect,
+.flow-node:hover polygon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+  stroke-width: 3;
+}
+
+/* Animated Flow Packets */
+.flow-packet {
+  filter: drop-shadow(0 0 5px currentColor);
+}

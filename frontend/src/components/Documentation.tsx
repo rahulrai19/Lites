@@ -3,9 +3,11 @@ import { useState } from 'react';
 interface DocsProps {
   activeSection: string;
   hideSidebar?: boolean;
+  stepRange?: [number, number];
+  hideTitle?: boolean;
 }
 
-export function Documentation({ activeSection, hideSidebar = false }: DocsProps) {
+export function Documentation({ activeSection, hideSidebar = false, stepRange, hideTitle = false }: DocsProps) {
   const containerClass = hideSidebar ? "" : "docs-main-area";
 
   // If the user clicks on Core Concepts, show MVP Cards
@@ -111,12 +113,17 @@ export function Documentation({ activeSection, hideSidebar = false }: DocsProps)
   return (
     <div className={containerClass}>
       <div>
-        <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Quick Start</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-          Lites runs as a transparent middleware proxy. The fastest way to optimize your LLM costs is to integrate it into your existing codebase by simply pointing your client to the local gateway.
-        </p>
+        {!hideTitle && (
+          <>
+            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Quick Start</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '2.5rem' }}>
+              Lites runs as a transparent middleware proxy. The fastest way to optimize your LLM costs is to integrate it into your existing codebase by simply pointing your client to the local gateway.
+            </p>
+          </>
+        )}
 
-        <div className="step-item">
+        {(!stepRange || (stepRange[0] <= 1 && stepRange[1] >= 1)) && (
+          <div className="step-item">
           <div className="step-number">1</div>
           <div className="step-line"></div>
           <div className="step-content">
@@ -136,7 +143,9 @@ export function Documentation({ activeSection, hideSidebar = false }: DocsProps)
             </div>
           </div>
         </div>
+        )}
 
+        {(!stepRange || (stepRange[0] <= 2 && stepRange[1] >= 2)) && (
         <div className="step-item">
           <div className="step-number">2</div>
           <div className="step-line"></div>
@@ -164,7 +173,9 @@ export function Documentation({ activeSection, hideSidebar = false }: DocsProps)
             </div>
           </div>
         </div>
+        )}
 
+        {(!stepRange || (stepRange[0] <= 3 && stepRange[1] >= 3)) && (
         <div className="step-item">
           <div className="step-number">3</div>
           <div className="step-line"></div>
@@ -193,7 +204,9 @@ export function Documentation({ activeSection, hideSidebar = false }: DocsProps)
             </div>
           </div>
         </div>
+        )}
 
+        {(!stepRange || (stepRange[0] <= 4 && stepRange[1] >= 4)) && (
         <div className="step-item">
           <div className="step-number">4</div>
           <div className="step-line"></div>
@@ -217,6 +230,7 @@ export function Documentation({ activeSection, hideSidebar = false }: DocsProps)
             </div>
           </div>
         </div>
+        )}
 
       </div>
 
