@@ -9,31 +9,56 @@ class HTTPMultiplexer(LLMClient):
     based on the model name. Currently supports OpenAI models.
     """
     async def execute(self, prompt: str, model: str) -> str:
-        # Simplistic routing: assume OpenAI for now unless prefixed.
-        # In a real system, you'd map "claude-*" to Anthropic, etc.
-        if not env.OPENAI_API_KEY:
-            # For testing without a key, just echo
-            return f"Mocked LLM Response for: {prompt[:20]}..."
+        # Simplistic routing: support OpenAI and Gemini
             
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    "https://api.openai.com/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {env.OPENAI_API_KEY}",
-                        "Content-Type": "application/json"
-                    },
-                    json={
-                        "model": model,
-                        "messages": [{"role": "user", "content": prompt}]
-                    },
-                    timeout=30.0
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    return data["choices"][0]["message"]["content"]
+                if model.startswith("gemini"):
+                    if not env.GEMINI_API_KEY:
+                        return f"Error: GEMINI_API_KEY not set for model {model}"
+                    
+                    response = await client.post(
+                        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={env.GEMINI_API_KEY}",
+                        headers={
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "contents": [
+                                {
+                                    "parts": [{"text": prompt}]
+                                }
+                            ]
+                        },
+                        timeout=30.0
+                    )
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        return data["candidates"][0]["content"]["parts"][0]["text"]
+                    else:
+                        return f"Error from Gemini provider: {response.text}"
                 else:
-                    return f"Error from provider: {response.text}"
+                    # Default to OpenAI
+                    if not env.OPENAI_API_KEY:
+                        return f"Error: OPENAI_API_KEY not set for model {model}"
+                        
+                    response = await client.post(
+                        "https://api.openai.com/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {env.OPENAI_API_KEY}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": model,
+                            "messages": [{"role": "user", "content": prompt}]
+                        },
+                        timeout=30.0
+                    )
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        return data["choices"][0]["message"]["content"]
+                    else:
+                        return f"Error from OpenAI provider: {response.text}"
         except Exception as e:
             return f"Failed to execute LLM request: {str(e)}"

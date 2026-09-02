@@ -30,33 +30,33 @@ class AIOptimizerEngine:
         operations_applied = []
         
         # Ensure API key is set
-        if not env.OPENAI_API_KEY:
+        if not env.GEMINI_API_KEY:
             # Fallback safely if no key
             pass
         else:
             try:
-                # Call OpenAI API to compress
+                # Call Gemini API to compress
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
-                        "https://api.openai.com/v1/chat/completions",
+                        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={env.GEMINI_API_KEY}",
                         headers={
-                            "Authorization": f"Bearer {env.OPENAI_API_KEY}",
                             "Content-Type": "application/json"
                         },
                         json={
-                            "model": "gpt-4o-mini",
-                            "messages": [
-                                {"role": "system", "content": self.system_prompt},
-                                {"role": "user", "content": prompt}
-                            ],
-                            "temperature": 0.1
+                            "contents": [
+                                {
+                                    "parts": [
+                                        {"text": f"System Instruction: {self.system_prompt}\n\nUser Text: {prompt}"}
+                                    ]
+                                }
+                            ]
                         },
                         timeout=10.0
                     )
                     
                     if response.status_code == 200:
                         data = response.json()
-                        candidate_prompt = data["choices"][0]["message"]["content"].strip()
+                        candidate_prompt = data["candidates"][0]["content"]["parts"][0]["text"].strip()
                         
                         # Verify we actually saved tokens
                         count_after_result = await self.token_counter.count_tokens(candidate_prompt, model)

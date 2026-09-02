@@ -16,6 +16,7 @@ class Env(BaseSettings):
     # AI Optimization configuration
     AI_OPTIMIZE_THRESHOLD: int = 500
     OPENAI_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
     
     # Redis configuration
     REDIS_URL: Optional[str] = None

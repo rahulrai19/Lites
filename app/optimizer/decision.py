@@ -34,8 +34,8 @@ class DecisionEngine:
             
         if token_count > self.max_tokens:
             return DecisionResult(
-                action=OptimizationAction.SKIP,
-                reason=f"Token count ({token_count}) exceeds the maximum threshold ({self.max_tokens}) for safe optimization."
+                action=OptimizationAction.CONTEXT_COMPRESS,
+                reason=f"Token count ({token_count}) exceeds safe optimization threshold ({self.max_tokens}). Applying Context Compression."
             )
             
         if token_count > self.ai_threshold:
