@@ -57,7 +57,19 @@ async def lifespan(app: FastAPI):
     yield
     # Cleanup if necessary
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Lites Proxy API", lifespan=lifespan)
+
+# Allow cross-origin requests from any domain (crucial for decoupled frontend/backend pipelines)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Lites-Status", "X-Lites-Latency-Ms"]
+)
 
 @app.post("/v1/chat/completions", response_model=ChatCompletionResponse, dependencies=[Depends(verify_api_key)])
 async def chat_completions(request: ChatCompletionRequest, response: Response):
