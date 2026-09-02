@@ -24,6 +24,9 @@ class Env(BaseSettings):
     # Authentication
     LITES_API_KEY: Optional[str] = None
     
+    # Security / CORS
+    FRONTEND_URL: str = "http://localhost:5173"
+    
     # Semantic Cache configuration
     SEMANTIC_CACHE_THRESHOLD: float = 0.95
 

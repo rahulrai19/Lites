@@ -61,10 +61,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Lites Proxy API", lifespan=lifespan)
 
-# Allow cross-origin requests from any domain (crucial for decoupled frontend/backend pipelines)
+# Allow cross-origin requests from the designated frontend domain (crucial for decoupled pipelines)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[env.FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
