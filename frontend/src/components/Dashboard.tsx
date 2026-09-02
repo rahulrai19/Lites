@@ -25,7 +25,8 @@ export function Dashboard() {
     const fetchMetrics = async () => {
       try {
         const apiKey = import.meta.env.VITE_LITES_API_KEY || 'test-lites-key';
-        const response = await fetch('/v1/lites/metrics', {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${apiUrl}/v1/lites/metrics`, {
           headers: {
             'Authorization': `Bearer ${apiKey}`
           }
