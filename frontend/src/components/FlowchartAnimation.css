@@ -1,0 +1,52 @@
+.flowchart-container {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 0.5rem);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.flowchart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.flow-line {
+  stroke-dasharray: 10, 10;
+  animation: flowAnimation 2s linear infinite;
+}
+
+.ai-line {
+  animation: flowAnimation 4s linear infinite reverse;
+}
+
+@keyframes flowAnimation {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.pulse-node rect {
+  animation: pulseGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0px rgba(239, 68, 68, 0.2);
+    filter: drop-shadow(0 0 2px var(--accent-red));
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    filter: drop-shadow(0 0 10px var(--accent-red));
+  }
+}
+
+.packet {
+  filter: drop-shadow(0 0 5px #ff4b2b);
+}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { Documentation } from './components/Documentation';
 import { Sidebar } from './components/Sidebar';
+import { FlowchartAnimation } from './components/FlowchartAnimation';
 import './index.css';
 
 function App() {
@@ -48,7 +49,10 @@ function App() {
         {activeTab === 'dashboard' ? (
           <>
             <Dashboard />
-            <Documentation activeSection="Integration Guide" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <FlowchartAnimation />
+              <Documentation activeSection="Integration Guide" hideSidebar={true} />
+            </div>
           </>
         ) : (
           <>

@@ -250,9 +250,115 @@ body {
   padding: 1.25rem;
   font-family: var(--font-mono);
   font-size: 0.9rem;
+  color: var(--text-primary);
   line-height: 1.6;
-  color: var(--text-secondary);
   overflow-x: auto;
+}
+
+/* Steps Styling for Docs */
+.step-item {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.step-line {
+  position: absolute;
+  top: 28px;
+  bottom: -2.5rem;
+  left: 13px;
+  width: 1px;
+  background-color: var(--border-color);
+  z-index: 0;
+}
+
+.step-item:last-child .step-line {
+  display: none;
+}
+
+.step-content {
+  flex-grow: 1;
+}
+
+.step-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.step-desc {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Docs 3-Column Layout */
+.docs-main-area {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  gap: 3rem;
+}
+
+.toc-container {
+  position: sticky;
+  top: 2rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--border-color);
+}
+
+.toc-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toc-list li a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.toc-list li a:hover {
+  color: var(--accent-red);
+}
+
+/* MVP Cards Grid */
+.mvp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .code-keyword { color: var(--accent-red); }
