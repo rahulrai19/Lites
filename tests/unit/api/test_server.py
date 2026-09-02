@@ -7,12 +7,14 @@ from app.api.server import app
 client = TestClient(app)
 
 def test_chat_completions_endpoint():
-    with patch("app.core.engine.LitesCoreEngine.execute") as mock_execute:
+    with patch("app.core.engine.LitesCoreEngine.execute") as mock_execute, \
+         patch("app.config.env.env.LITES_API_KEY", "test-key"):
         mock_execute.return_value = "Mocked API Response"
 
         with TestClient(app) as client:
             response = client.post(
                 "/v1/chat/completions",
+                headers={"Authorization": "Bearer test-key"},
                 json={
                     "model": "gpt-4o",
                     "messages": [
@@ -37,12 +39,14 @@ def test_chat_completions_endpoint():
         assert "x-lites-latency-ms" in response.headers
 
 def test_chat_completions_invalid_context():
-    with patch("app.core.engine.LitesCoreEngine.execute") as mock_execute:
+    with patch("app.core.engine.LitesCoreEngine.execute") as mock_execute, \
+         patch("app.config.env.env.LITES_API_KEY", "test-key"):
         mock_execute.return_value = "Mocked API Response"
 
         with TestClient(app) as client:
             response = client.post(
                 "/v1/chat/completions",
+                headers={"Authorization": "Bearer test-key"},
                 json={
                     "model": "gpt-4o",
                     "messages": [
@@ -58,8 +62,9 @@ def test_chat_completions_invalid_context():
         assert data["choices"][0]["message"]["content"] == "Mocked API Response"
 
 def test_lites_metrics_endpoint():
-    with TestClient(app) as client:
-        response = client.get("/v1/lites/metrics")
+    with patch("app.config.env.env.LITES_API_KEY", "test-key"):
+        with TestClient(app) as client:
+            response = client.get("/v1/lites/metrics", headers={"Authorization": "Bearer test-key"})
         assert response.status_code == 200
         data = response.json()
         assert "total_requests" in data

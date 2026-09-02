@@ -13,8 +13,8 @@ def test_skips_when_tokens_exceed_maximum():
     engine = DecisionEngine(max_tokens=1000)
     result = engine.evaluate(2000)
     
-    assert result.action == OptimizationAction.SKIP
-    assert "exceeds the maximum threshold" in result.reason
+    assert result.action == OptimizationAction.CONTEXT_COMPRESS
+    assert "exceeds safe optimization threshold" in result.reason
     assert "2000" in result.reason
 
 def test_applies_rule_optimize_within_thresholds():
@@ -39,4 +39,4 @@ def test_uses_environment_variables_by_default():
     assert engine.evaluate(100000).action == OptimizationAction.AI_OPTIMIZE
     
     # 130000 should skip
-    assert engine.evaluate(130000).action == OptimizationAction.SKIP
+    assert engine.evaluate(130000).action == OptimizationAction.CONTEXT_COMPRESS

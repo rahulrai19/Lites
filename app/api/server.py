@@ -29,11 +29,11 @@ async def lifespan(app: FastAPI):
     if env.REDIS_URL:
         exact_cache = RedisCache(env.REDIS_URL)
         semantic_cache = RedisSemanticCache(env.REDIS_URL)
-        print("🚀 Lites is running with persistent Redis Cache!")
+        print("Lites is running with persistent Redis Cache!")
     else:
         exact_cache = InMemoryCache()
         semantic_cache = InMemorySemanticCache()
-        print("⚠️ Lites is running with InMemory Cache (Not recommended for production).")
+        print("Lites is running with InMemory Cache (Not recommended for production).")
         
     embedder = Embedder()
     tokenizer = OpenAITokenizer()
@@ -70,6 +70,11 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["X-Lites-Status", "X-Lites-Latency-Ms"]
 )
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint to verify application status."""
+    return {"status": "ok", "service": "lites-engine"}
 
 @app.post("/v1/chat/completions", response_model=ChatCompletionResponse, dependencies=[Depends(verify_api_key)])
 async def chat_completions(request: ChatCompletionRequest, response: Response):

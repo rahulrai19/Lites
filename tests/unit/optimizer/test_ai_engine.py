@@ -22,11 +22,18 @@ async def test_ai_engine_compresses_prompt_successfully(mock_env):
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
-        "choices": [{"message": {"content": compressed_prompt}}]
+        "candidates": [
+            {
+                "content": {
+                    "parts": [{"text": compressed_prompt}]
+                }
+            }
+        ]
     }
     
-    # Mock httpx.AsyncClient
-    with patch("httpx.AsyncClient") as mock_client_class:
+    # Mock httpx.AsyncClient and the env key
+    with patch("httpx.AsyncClient") as mock_client_class, \
+         patch("app.optimizer.ai_engine.env.GEMINI_API_KEY", "valid_key"):
         mock_client_instance = mock_client_class.return_value.__aenter__.return_value
         mock_client_instance.post.return_value = mock_response
         
