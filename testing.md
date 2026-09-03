@@ -137,6 +137,86 @@ STOP after this test.
 - **Live Test**: Verified the remote Render deployment automatically rebuilt with the new configurations and successfully exposed the new endpoint (`curl -s https://lites-su1c.onrender.com/health` returned `{"status": "ok", "service": "lites-engine"}`).
 </details>
 
+### TEST 02 → Tokenizer
+
+<details>
+<summary><b>Test Parameters & Prompt</b></summary>
+
+```markdown
+# LITES TEST 02 — TOKENIZER
+
+Inspect the existing Lites tokenizer implementation before changing anything.
+
+## Objective
+
+Verify that token counting is accurate, deterministic, isolated behind an abstraction, and safe for different types of input.
+
+## Test cases
+
+Test:
+
+1. Empty string
+2. Single word
+3. Normal sentence
+4. Long prompt
+5. Repeated text
+6. Unicode text
+7. Multilingual text
+8. Code
+9. JSON
+10. Markdown
+11. URLs
+12. Special characters
+13. Very long input
+
+## Required properties
+
+Verify:
+
+* same input produces the same token count
+* empty input behaves correctly
+* token count does not become negative
+* longer inputs generally produce appropriate counts
+* tokenizer failures are handled correctly
+* tokenizer implementation is not scattered through business logic
+
+## Message testing
+
+If the implementation supports chat messages, test:
+
+* system message
+* user message
+* assistant message
+* multiple messages
+* empty message
+* mixed content
+
+## Error testing
+
+Test:
+
+* invalid input
+* unsupported content
+* extremely large input
+
+## Important
+
+Do NOT hard-code expected token counts unless they are specifically tied to the configured tokenizer/model.
+
+Prefer invariant/property-based assertions where appropriate.
+
+## Fix policy
+
+Only fix actual defects.
+
+Add regression tests for every defect discovered.
+
+Run the complete tokenizer test suite after changes.
+
+STOP after this test.
+```
+</details>
+
 <details>
 <summary><b>Testing T2</b></summary>
 **Status: PASS (with fixes)**
@@ -154,7 +234,12 @@ STOP after this test.
 - **Status**: PASSED.
 - **Verification**: Asserted that passing `None` as input raises a `TokenizerError`. Asserted that providing unescaped special tokens (`<|endoftext|>`) raises a `TokenizerError`, proving that raw `tiktoken` exceptions are properly caught and wrapped, preventing them from leaking into business logic.
 
-#### 4. Final Report
+#### 4. Deployment Verification
+- **Status**: PASSED. 
+- **Verification**: Pushed fixes to the `origin/main` branch (`git push`).
+- **Live Test**: Verified the remote Render deployment automatically rebuilt with the new configurations and successfully exposed the new endpoint (`curl -s https://lites-su1c.onrender.com/health` returned `{"status": "ok", "service": "lites-engine"}`). Note: The Tokenizer does not have its own public route; it is an internal service consumed by the `/v1/chat/completions` engine.
+
+#### 5. Final Report
 - **Commands executed**: `uv run pytest tests/unit/tokenizer -v`
 - **Tests executed**: 21
 - **Failures found**: 1 test failed initially (`test_handles_repeated_text`) due to a strict proportionality assertion (`token_count == original * 10`). Tokenizers (like BPE) dynamically merge repeating adjacent subwords, making exact multipliers invalid.
