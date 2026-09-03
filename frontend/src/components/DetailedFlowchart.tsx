@@ -1,4 +1,3 @@
-import React from 'react';
 import './DetailedFlowchart.css';
 
 export function DetailedFlowchart() {

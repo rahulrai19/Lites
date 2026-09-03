@@ -9,12 +9,6 @@ function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'docs'>('dashboard');
   const [activeSection, setActiveSection] = useState('Quick Start');
 
-  const handleSearch = (query: string) => {
-    // Basic search functionality - handled internally by Sidebar, 
-    // but we could also filter content here if needed.
-    console.log("Searching docs for:", query);
-  };
-
   return (
     <div className="app-container">
       <nav className="navbar">
@@ -88,7 +82,6 @@ function App() {
         ) : (
           <>
             <Sidebar 
-              onSearch={handleSearch} 
               activeSection={activeSection}
               setActiveSection={setActiveSection}
             />

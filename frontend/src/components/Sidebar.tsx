@@ -1,21 +1,13 @@
 import { useState } from 'react';
-import { Search, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface SidebarProps {
-  onSearch: (query: string) => void;
   activeSection: string;
   setActiveSection: (section: string) => void;
 }
 
-export function Sidebar({ onSearch, activeSection, setActiveSection }: SidebarProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+export function Sidebar({ activeSection, setActiveSection }: SidebarProps) {
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
-  
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    onSearch(value);
-  };
 
   const toggleSection = (title: string) => {
     setCollapsedSections(prev => {
@@ -87,11 +79,7 @@ export function Sidebar({ onSearch, activeSection, setActiveSection }: SidebarPr
             {!collapsedSections.has(section.title) && (
               <ul className="sidebar-list">
                 {section.items.map((item, itemIdx) => {
-                  // Determine visibility based on search
-                  const isVisible = item.toLowerCase().includes(searchTerm.toLowerCase());
-                  
-                  if (!isVisible && searchTerm !== '') return null;
-                  
+
                   return (
                     <li key={itemIdx}>
                       <button 

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 interface DocsProps {
   activeSection: string;
   hideSidebar?: boolean;
