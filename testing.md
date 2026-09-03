@@ -4,7 +4,7 @@ This document records the results and reports for the complete 22-step Lites tes
 
 ## Roadmap Status
 - [x] TEST 01 → Project Foundation
-- [ ] TEST 02 → Tokenizer
+- [x] TEST 02 → Tokenizer
 - [ ] TEST 03 → Rule-Based Optimizer
 - [ ] TEST 04 → Intent/Safety Preservation
 - [ ] TEST 05 → Optimization Metrics
@@ -97,6 +97,8 @@ STOP after this test.
 ```
 </details>
 
+<details>
+<summary><b>Testing T1</b></summary>
 **Status: PASS (with fixes)**
 
 #### 1. Python Environment
@@ -133,3 +135,29 @@ STOP after this test.
 - **Status**: PASSED. 
 - **Verification**: Pushed fixes to the `origin/main` branch (`git push`).
 - **Live Test**: Verified the remote Render deployment automatically rebuilt with the new configurations and successfully exposed the new endpoint (`curl -s https://lites-su1c.onrender.com/health` returned `{"status": "ok", "service": "lites-engine"}`).
+</details>
+
+<details>
+<summary><b>Testing T2</b></summary>
+**Status: PASS (with fixes)**
+
+#### 1. Content Types
+- **Status**: PASSED
+- **Verification**: Verified token counting for Single word, Long prompt, Repeated text, Multilingual text, Code snippet, JSON payload, Markdown formatting, URLs, Special characters, and Extremely large input (>200k chars). Added 10 new test cases to `test_openai_tokenizer.py` covering these.
+
+#### 2. Required Properties
+- **Determinism**: PASSED. Asserted that counting the same text 3 times yields the exact same token count.
+- **Proportionality**: PASSED. Asserted that `text * 100` yields a strictly greater token count than `text * 1`, avoiding mathematical exactness as tokenizers dynamically merge adjacent subwords.
+- **Non-negativity**: PASSED. Included assertions that counts are `>= 0`.
+
+#### 3. Error Handling
+- **Status**: PASSED.
+- **Verification**: Asserted that passing `None` as input raises a `TokenizerError`. Asserted that providing unescaped special tokens (`<|endoftext|>`) raises a `TokenizerError`, proving that raw `tiktoken` exceptions are properly caught and wrapped, preventing them from leaking into business logic.
+
+#### 4. Final Report
+- **Commands executed**: `uv run pytest tests/unit/tokenizer -v`
+- **Tests executed**: 21
+- **Failures found**: 1 test failed initially (`test_handles_repeated_text`) due to a strict proportionality assertion (`token_count == original * 10`). Tokenizers (like BPE) dynamically merge repeating adjacent subwords, making exact multipliers invalid.
+- **Fixes made**: Adjusted the proportionality assertion to verify strict growth (`>`) rather than mathematical equality, adhering to the property-based testing requirement.
+- **Remaining issues**: None. All 21 tokenizer tests pass reliably.
+</details>
