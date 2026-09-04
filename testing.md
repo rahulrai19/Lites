@@ -137,6 +137,8 @@ STOP after this test.
 - **Live Test**: Verified the remote Render deployment automatically rebuilt with the new configurations and successfully exposed the new endpoint (`curl -s https://lites-su1c.onrender.com/health` returned `{"status": "ok", "service": "lites-engine"}`).
 </details>
 
+---
+
 ### TEST 02 → Tokenizer
 
 <details>
@@ -247,6 +249,8 @@ STOP after this test.
 - **Fixes made**: Adjusted the proportionality assertion to verify strict growth (`>`) rather than mathematical equality, adhering to the property-based testing requirement.
 - **Remaining issues**: None. All 21 tokenizer tests pass reliably.
 </details>
+
+---
 
 ### TEST 03 → Rule-Based Optimizer
 
