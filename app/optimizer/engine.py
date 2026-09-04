@@ -17,10 +17,10 @@ class RuleOptimizerEngine:
         # Define the pipeline of deterministic rules
         self.rules: List[Callable[[str], Tuple[str, bool]]] = [
             normalize_line_endings,
-            remove_fillers,
             normalize_punctuation,
             normalize_whitespace,
-            remove_duplicate_sentences
+            remove_duplicate_sentences,
+            remove_fillers
         ]
 
     async def optimize(self, prompt: str, model: str = "o200k_base", context: Optional[ContextProfile] = None) -> Tuple[str, OptimizationMetadata]:

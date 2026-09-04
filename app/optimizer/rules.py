@@ -9,10 +9,11 @@ def normalize_whitespace(text: str) -> Tuple[str, bool]:
     """
     # 1. Replace tabs with spaces
     new_text = text.replace('\t', ' ')
-    # 2. Trim trailing/leading spaces on every line so that empty lines become truly empty
-    new_text = re.sub(r'^[ ]+|[ ]+$', '', new_text, flags=re.MULTILINE)
-    # 3. Collapse multiple spaces into one
-    new_text = re.sub(r'[ ]{2,}', ' ', new_text)
+    # 2. Trim trailing spaces on every line so that empty lines become truly empty,
+    # but preserve leading spaces to protect Python/YAML indentation!
+    new_text = re.sub(r'[ ]+$', '', new_text, flags=re.MULTILINE)
+    # 3. Collapse multiple spaces into one, but ONLY between words to preserve indentation!
+    new_text = re.sub(r'(?<=\S)[ ]{2,}(?=\S)', ' ', new_text)
     # 4. Collapse 3+ newlines into 2
     new_text = re.sub(r'\n{3,}', '\n\n', new_text)
     # 5. Global strip
@@ -60,7 +61,7 @@ def remove_fillers(text: str) -> Tuple[str, bool]:
     """
     safe_fillers = [
         r'(?i)^\s*(?:can you|could you|would you|will you)\s+(?:please|kindly)?\s*',
-        r'(?i)^\s*(?:please|kindly)\s*,?\s*',
+        r'(?i)^\s*(?:please|kindly)(?:\s*,|\s+(?:can|could|would|will|help|tell|explain|provide|show|give|clarify)\b)\s*',
         r'(?i)^\s*i would like (?:you to )?\s*',
         r'(?i)^\s*i was wondering if you (?:could|can) \s*'
     ]
