@@ -6,7 +6,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 01 → Project Foundation
 - [x] TEST 02 → Tokenizer
 - [x] TEST 03 → Rule-Based Optimizer
-- [ ] TEST 04 → Intent/Safety Preservation
+- [x] TEST 04 → Intent/Safety Preservation
 - [x] TEST 05 → Optimization Metrics
 - [ ] TEST 06 → Optimization Decision Engine
 - [ ] TEST 07 → Exact Cache
@@ -137,6 +137,8 @@ STOP after this test.
 - **Live Test**: Verified the remote Render deployment automatically rebuilt with the new configurations and successfully exposed the new endpoint (`curl -s https://lites-su1c.onrender.com/health` returned `{"status": "ok", "service": "lites-engine"}`).
 </details>
 
+---
+
 ### TEST 02 → Tokenizer
 
 <details>
@@ -248,6 +250,8 @@ STOP after this test.
 - **Remaining issues**: None. All 21 tokenizer tests pass reliably.
 </details>
 
+---
+
 ### TEST 03 → Rule-Based Optimizer
 
 <details>
@@ -323,6 +327,146 @@ Only fix actual defects. Add regression tests. Run all optimizer tests. STOP aft
 - **Failures found**: 7 tests initially failed exposing defects in whitespace trimming, paragraph deduplication, stacked filler words, and aggressive punctuation handling.
 - **Fixes made**: Implemented `\n{3,}` compression, trailing space trims, non-empty block deduplication, while-loop filler stripping with an empty-string safety hatch, and explicitly neutralized the punctuation rule. 
 - **Remaining issues**: None. All 24 optimizer tests now pass.
+</details>
+
+---
+
+### TEST 04 → Intent/Safety Preservation
+
+<details>
+<summary><b>Test Parameters & Prompt</b></summary>
+
+```markdown
+# LITES TEST 04 — INTENT AND SAFETY TESTING
+
+Test whether Lites can optimize prompts without accidentally changing their intended meaning.
+
+## Objective
+
+The optimizer must prefer NO CHANGE over an unsafe optimization.
+
+Create adversarial test cases.
+
+## Test categories
+
+### Negative instructions
+* Do not delete the database.
+* Do not expose the API key.
+* Do not modify the production server.
+* Never remove authentication.
+* Do not disable validation.
+
+Verify that optimization never reverses the instruction.
+
+### Conditional instructions
+* If the request fails, retry it.
+* Only delete the file if it is temporary.
+* Do not deploy unless tests pass.
+
+### Technical content
+Test: code, JSON, YAML, SQL, shell commands, regular expressions, configuration files.
+
+### Similar words with different meanings
+Test prompts where removing a word could change semantics.
+
+## Required behavior
+When the optimizer is uncertain: DO NOT OPTIMIZE.
+
+## Regression tests
+Every discovered semantic-risk case must become a permanent test.
+```
+</details>
+
+<details>
+<summary><b>Testing T4</b></summary>
+
+**Status: PASS (with fixes)**
+
+#### 1. Negative & Conditional Instructions
+- **Status**: PASSED
+- **Verification**: Created test suite `tests/unit/optimizer/test_safety.py`. Passed phrases like "Do not delete the database." and "Only delete the file if it is temporary." through the engine. The engine properly identified 0 token savings and reverted the prompt to the unmodified original (100% NO-OP).
+
+#### 2. Technical Content
+- **Status**: PASSED
+- **Failures Found**: 
+  - The `normalize_whitespace` rule aggressively stripped leading spaces on all lines, completely destroying YAML and Python code indentation. 
+  - The deterministic `engine.optimize` output unexpectedly mismatched trailing newlines.
+- **Fixes Made**: 
+  - Updated `normalize_whitespace` regex to `(?<=\S)[ ]{2,}(?=\S)` to strictly collapse multiple spaces ONLY between words, perfectly preserving leading indentation for Code and YAML.
+  - Adjusted `normalize_whitespace` trailing space trimming to `r'[ ]+$'` (ignoring leading spaces).
+
+#### 3. Similar Words
+- **Status**: PASSED
+- **Failures Found**: The filler rule aggressively stripped the word "Please" from load-bearing semantic contexts (e.g. "Please the customer").
+- **Fixes Made**: Constrained the regex in `safe_fillers` for "please/kindly" to only match if it is followed by a comma or a known conversational helper verb (e.g. `tell`, `explain`, `help`).
+
+#### 4. Systemic Fixes
+- **Pipeline Reordering**: Discovered that `remove_fillers` running before `remove_duplicate_sentences` caused identical chat messages to mismatch (if one started with a filler). Fixed by moving `remove_fillers` to the exact END of the pipeline, so the engine first deduplicates strings, then trims fillers from the final block.
+- **Engine Failsafe Validated**: Discovered the `tokens_saved <= 0` logic correctly halts modifications if token savings are trivial. This is an extremely safe design pattern that protected Python snippet formatting in adversarial tests.
+
+#### 5. Final Report
+- **Commands executed**: `uv run pytest tests/unit/optimizer -v`
+- **Tests executed**: 39
+- **Failures found**: 3 tests failed due to YAML/Code indentation loss, pipeline order, and filler word collision.
+- **Fixes made**: Regex constraints (indentation protection, verb-lookaheads), Pipeline reordering.
+- **Remaining issues**: None. All 39 optimizer and safety tests pass.
+
+#### 6. Test Output
+
+<details>
+<summary><b>View raw pytest output</b></summary>
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.11, pytest-9.1.1, pluggy-1.6.0
+rootdir: D:\Lites\Lites
+configfile: pyproject.toml
+plugins: anyio-4.14.2, asyncio-1.4.0
+collected 39 items
+
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_compresses_prompt_successfully PASSED [  2%]
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_rejects_longer_compression PASSED [  5%]
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_handles_api_failure PASSED [  7%]
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_skips_without_api_key PASSED [ 10%]
+tests/unit/optimizer/test_context.py::test_context_code_skips_whitespace PASSED [ 12%]
+tests/unit/optimizer/test_context.py::test_context_legal_skips_fillers PASSED [ 15%]
+tests/unit/optimizer/test_context.py::test_context_chat_applies_all PASSED [ 17%]
+tests/unit/optimizer/test_decision.py::test_skips_when_tokens_below_minimum PASSED [ 20%]
+tests/unit/optimizer/test_decision.py::test_skips_when_tokens_exceed_maximum PASSED [ 23%]
+tests/unit/optimizer/test_decision.py::test_applies_rule_optimize_within_thresholds PASSED [ 25%]
+tests/unit/optimizer/test_decision.py::test_uses_environment_variables_by_default PASSED [ 28%]
+tests/unit/optimizer/test_rules.py::test_whitespace_multiple_spaces PASSED [ 30%]
+tests/unit/optimizer/test_rules.py::test_whitespace_leading_trailing PASSED [ 33%]
+tests/unit/optimizer/test_rules.py::test_whitespace_tabs PASSED          [ 35%]
+tests/unit/optimizer/test_rules.py::test_whitespace_multiple_newlines PASSED [ 38%]
+tests/unit/optimizer/test_rules.py::test_whitespace_mixed PASSED         [ 41%]
+tests/unit/optimizer/test_rules.py::test_line_endings_lf PASSED          [ 43%]
+tests/unit/optimizer/test_rules.py::test_line_endings_crlf PASSED        [ 46%]
+tests/unit/optimizer/test_rules.py::test_line_endings_cr PASSED          [ 48%]
+tests/unit/optimizer/test_rules.py::test_line_endings_mixed PASSED       [ 51%]
+tests/unit/optimizer/test_rules.py::test_duplicate_exact PASSED          [ 53%]
+tests/unit/optimizer/test_rules.py::test_duplicate_paragraphs PASSED     [ 56%]
+tests/unit/optimizer/test_rules.py::test_duplicate_whitespace_diff PASSED [ 58%]
+tests/unit/optimizer/test_rules.py::test_duplicate_punctuation_diff PASSED [ 61%]
+tests/unit/optimizer/test_rules.py::test_fillers_alone PASSED            [ 64%]
+tests/unit/optimizer/test_rules.py::test_fillers_inside PASSED           [ 66%]
+tests/unit/optimizer/test_rules.py::test_fillers_repeated PASSED         [ 69%]
+tests/unit/optimizer/test_rules.py::test_fillers_meaningful PASSED       [ 71%]
+tests/unit/optimizer/test_rules.py::test_punctuation_repeated PASSED     [ 74%]
+tests/unit/optimizer/test_rules.py::test_punctuation_unnecessary PASSED  [ 76%]
+tests/unit/optimizer/test_rules.py::test_punctuation_in_code PASSED      [ 79%]
+tests/unit/optimizer/test_rules.py::test_punctuation_in_urls PASSED      [ 82%]
+tests/unit/optimizer/test_rules.py::test_punctuation_in_json PASSED      [ 84%]
+tests/unit/optimizer/test_rules.py::test_engine_optimization_flow PASSED [ 87%]
+tests/unit/optimizer/test_rules.py::test_engine_noop PASSED              [ 89%]
+tests/unit/optimizer/test_safety.py::test_safety_negative_instructions PASSED [ 92%]
+tests/unit/optimizer/test_safety.py::test_safety_conditional_instructions PASSED [ 94%]
+tests/unit/optimizer/test_safety.py::test_safety_technical_content PASSED [ 97%]
+tests/unit/optimizer/test_safety.py::test_safety_similar_words PASSED    [100%]
+
+============================= 39 passed in 0.86s ==============================
+```
+</details>
 </details>
 
 ---

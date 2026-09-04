@@ -27,7 +27,7 @@ def test_whitespace_multiple_newlines():
 
 def test_whitespace_mixed():
     text = "  Hello \t  world \n \n \n How  are \t you?  "
-    expected = "Hello world\n\nHow are you?"
+    expected = "Hello world\n\n How are you?"
     assert normalize_whitespace(text)[0] == expected
 
 # --- B. Line endings ---
