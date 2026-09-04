@@ -6,7 +6,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 01 → Project Foundation
 - [x] TEST 02 → Tokenizer
 - [x] TEST 03 → Rule-Based Optimizer
-- [ ] TEST 04 → Intent/Safety Preservation
+- [x] TEST 04 → Intent/Safety Preservation
 - [ ] TEST 05 → Optimization Metrics
 - [ ] TEST 06 → Optimization Decision Engine
 - [ ] TEST 07 → Exact Cache
@@ -327,11 +327,11 @@ Only fix actual defects. Add regression tests. Run all optimizer tests. STOP aft
 
 ---
 
-## 4. Test 04: Intent and Safety Preservation
-- [x] TEST 04 → Intent/Safety Preservation
+### TEST 04 → Intent/Safety Preservation
 
 <details>
-<summary><b>Test 04 Parameters</b></summary>
+<summary><b>Test Parameters & Prompt</b></summary>
+
 ```markdown
 # LITES TEST 04 — INTENT AND SAFETY TESTING
 
@@ -406,4 +406,61 @@ Every discovered semantic-risk case must become a permanent test.
 - **Failures found**: 3 tests failed due to YAML/Code indentation loss, pipeline order, and filler word collision.
 - **Fixes made**: Regex constraints (indentation protection, verb-lookaheads), Pipeline reordering.
 - **Remaining issues**: None. All 39 optimizer and safety tests pass.
+
+#### 6. Test Output
+
+<details>
+<summary><b>View raw pytest output</b></summary>
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.11, pytest-9.1.1, pluggy-1.6.0
+rootdir: D:\Lites\Lites
+configfile: pyproject.toml
+plugins: anyio-4.14.2, asyncio-1.4.0
+collected 39 items
+
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_compresses_prompt_successfully PASSED [  2%]
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_rejects_longer_compression PASSED [  5%]
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_handles_api_failure PASSED [  7%]
+tests/unit/optimizer/test_ai_engine.py::test_ai_engine_skips_without_api_key PASSED [ 10%]
+tests/unit/optimizer/test_context.py::test_context_code_skips_whitespace PASSED [ 12%]
+tests/unit/optimizer/test_context.py::test_context_legal_skips_fillers PASSED [ 15%]
+tests/unit/optimizer/test_context.py::test_context_chat_applies_all PASSED [ 17%]
+tests/unit/optimizer/test_decision.py::test_skips_when_tokens_below_minimum PASSED [ 20%]
+tests/unit/optimizer/test_decision.py::test_skips_when_tokens_exceed_maximum PASSED [ 23%]
+tests/unit/optimizer/test_decision.py::test_applies_rule_optimize_within_thresholds PASSED [ 25%]
+tests/unit/optimizer/test_decision.py::test_uses_environment_variables_by_default PASSED [ 28%]
+tests/unit/optimizer/test_rules.py::test_whitespace_multiple_spaces PASSED [ 30%]
+tests/unit/optimizer/test_rules.py::test_whitespace_leading_trailing PASSED [ 33%]
+tests/unit/optimizer/test_rules.py::test_whitespace_tabs PASSED          [ 35%]
+tests/unit/optimizer/test_rules.py::test_whitespace_multiple_newlines PASSED [ 38%]
+tests/unit/optimizer/test_rules.py::test_whitespace_mixed PASSED         [ 41%]
+tests/unit/optimizer/test_rules.py::test_line_endings_lf PASSED          [ 43%]
+tests/unit/optimizer/test_rules.py::test_line_endings_crlf PASSED        [ 46%]
+tests/unit/optimizer/test_rules.py::test_line_endings_cr PASSED          [ 48%]
+tests/unit/optimizer/test_rules.py::test_line_endings_mixed PASSED       [ 51%]
+tests/unit/optimizer/test_rules.py::test_duplicate_exact PASSED          [ 53%]
+tests/unit/optimizer/test_rules.py::test_duplicate_paragraphs PASSED     [ 56%]
+tests/unit/optimizer/test_rules.py::test_duplicate_whitespace_diff PASSED [ 58%]
+tests/unit/optimizer/test_rules.py::test_duplicate_punctuation_diff PASSED [ 61%]
+tests/unit/optimizer/test_rules.py::test_fillers_alone PASSED            [ 64%]
+tests/unit/optimizer/test_rules.py::test_fillers_inside PASSED           [ 66%]
+tests/unit/optimizer/test_rules.py::test_fillers_repeated PASSED         [ 69%]
+tests/unit/optimizer/test_rules.py::test_fillers_meaningful PASSED       [ 71%]
+tests/unit/optimizer/test_rules.py::test_punctuation_repeated PASSED     [ 74%]
+tests/unit/optimizer/test_rules.py::test_punctuation_unnecessary PASSED  [ 76%]
+tests/unit/optimizer/test_rules.py::test_punctuation_in_code PASSED      [ 79%]
+tests/unit/optimizer/test_rules.py::test_punctuation_in_urls PASSED      [ 82%]
+tests/unit/optimizer/test_rules.py::test_punctuation_in_json PASSED      [ 84%]
+tests/unit/optimizer/test_rules.py::test_engine_optimization_flow PASSED [ 87%]
+tests/unit/optimizer/test_rules.py::test_engine_noop PASSED              [ 89%]
+tests/unit/optimizer/test_safety.py::test_safety_negative_instructions PASSED [ 92%]
+tests/unit/optimizer/test_safety.py::test_safety_conditional_instructions PASSED [ 94%]
+tests/unit/optimizer/test_safety.py::test_safety_technical_content PASSED [ 97%]
+tests/unit/optimizer/test_safety.py::test_safety_similar_words PASSED    [100%]
+
+============================= 39 passed in 0.86s ==============================
+```
+</details>
 </details>
