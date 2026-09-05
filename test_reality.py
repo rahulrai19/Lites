@@ -8,7 +8,7 @@ def test_cache(url):
         "Authorization": "Bearer test-lites-key"
     }
     payload = {
-        "model": "gemini-1.5-flash",
+        "model": "gemini-3.1-flash-lite",
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What is the capital of Japan? Please answer in one word."}

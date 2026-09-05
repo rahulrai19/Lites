@@ -7,7 +7,7 @@ class AdaptiveRouter:
     Implements Adaptive Model Routing (Optimization #5).
     If a user requests a highly expensive model (e.g., gpt-4) but the task is incredibly simple
     (e.g., very few tokens and a simple context profile), Lites automatically routes the request
-    to a cheaper, faster model (e.g., gemini-1.5-flash) to save costs.
+    to a cheaper, faster model (e.g., gemini-3.1-flash-lite) to save costs.
     """
     def __init__(self):
         # Define expensive models that we want to optimize away from if possible
@@ -17,7 +17,7 @@ class AdaptiveRouter:
         self.simple_token_threshold = 200
         
         # The fast/cheap fallback model
-        self.fallback_model = "gemini-1.5-flash"
+        self.fallback_model = "gemini-3.1-flash-lite"
 
     def route(self, prompt: str, original_model: str, token_count: int, context: ContextProfile) -> Tuple[str, bool]:
         """

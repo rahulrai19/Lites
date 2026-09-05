@@ -46,7 +46,7 @@ class AIOptimizerEngine:
                             operations_applied.append("ai_compression")
                     else:
                         response = await client.post(
-                            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={env.GEMINI_API_KEY}",
+                            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={env.GEMINI_API_KEY}",
                             headers={
                                 "Content-Type": "application/json"
                             },
