@@ -64,7 +64,7 @@ app = FastAPI(title="Lites Proxy API", lifespan=lifespan)
 # Allow cross-origin requests from the designated frontend domain (crucial for decoupled pipelines)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[env.FRONTEND_URL],
+    allow_origins=[env.FRONTEND_URL, "https://lites.sbs", "http://localhost:5173", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
