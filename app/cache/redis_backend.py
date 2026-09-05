@@ -9,15 +9,32 @@ from app.config.env import env
 class RedisCache(CacheProvider):
     def __init__(self, redis_url: str):
         self.client = redis.from_url(redis_url)
+        self.hits = 0
+        self.misses = 0
+
+    @property
+    def hit_rate(self) -> float:
+        total = self.hits + self.misses
+        return self.hits / total if total > 0 else 0.0
 
     async def get(self, key: str) -> Optional[CacheEntry]:
-        data = await self.client.get(f"exact:{key}")
+        try:
+            data = await self.client.get(f"exact:{key}")
+        except Exception:
+            # Simulate failure isolation
+            self.misses += 1
+            return None
+            
         if data:
             entry = CacheEntry.model_validate_json(data)
             if entry.is_expired:
+                self.misses += 1
                 await self.delete(key)
                 return None
+            self.hits += 1
             return entry
+            
+        self.misses += 1
         return None
 
     async def set(self, key: str, entry: CacheEntry) -> None:

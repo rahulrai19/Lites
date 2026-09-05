@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "b3e34b7f-8c3e-4b47-b892-0b2a3f9e4210",
+		"name": "Lites Exact Cache Test",
+		"description": "A collection to test the Exact Caching layer in Lites. \n\nRun 'Request 1 (Miss)' first. Then immediately run 'Request 2 (Hit)'. Request 2 should return noticeably faster as it bypasses the LLM provider.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Cache Miss (First Request)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is expected to be slower (>500ms)\", function () {",
+							"    // Adjust based on your actual LLM provider's latency",
+							"    pm.expect(pm.response.responseTime).to.be.above(500);",
+							"});",
+							"",
+							"// Save the response time to compare later",
+							"pm.environment.set(\"miss_latency\", pm.response.responseTime);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{LITES_API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"model\": \"gpt-4o\",\n    \"messages\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are a helpful assistant.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"What are the benefits of exact caching?\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/chat/completions",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"chat",
+						"completions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Cache Hit (Exact Match)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is significantly faster than Miss (<500ms)\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Cache Hit is faster than Cache Miss\", function () {",
+							"    var missLatency = pm.environment.get(\"miss_latency\");",
+							"    if (missLatency) {",
+							"        pm.expect(pm.response.responseTime).to.be.below(missLatency);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{LITES_API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"model\": \"gpt-4o\",\n    \"messages\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are a helpful assistant.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"What are the benefits of exact caching?\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/v1/chat/completions",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"v1",
+						"chat",
+						"completions"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://lites-su1c.onrender.com",
+			"type": "string"
+		},
+		{
+			"key": "LITES_API_KEY",
+			"value": "your_api_key_here",
+			"type": "string"
+		}
+	]
+}

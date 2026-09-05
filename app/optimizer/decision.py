@@ -21,11 +21,17 @@ class DecisionEngine:
         self.max_tokens = max_tokens if max_tokens is not None else env.MAX_TOKENS_FOR_OPTIMIZATION
         self.ai_threshold = ai_threshold if ai_threshold is not None else env.AI_OPTIMIZE_THRESHOLD
 
-    def evaluate(self, token_count: int) -> DecisionResult:
+    def evaluate(self, token_count: int, expected_savings: Optional[int] = None, ai_cost: Optional[int] = None) -> DecisionResult:
         """
         Evaluates the prompt token count against configured thresholds 
         to determine the optimal optimization action.
         """
+        if expected_savings is not None and expected_savings <= 0:
+            return DecisionResult(
+                action=OptimizationAction.SKIP,
+                reason="No expected savings from optimization."
+            )
+
         if token_count < self.min_tokens:
             return DecisionResult(
                 action=OptimizationAction.SKIP,
@@ -39,6 +45,11 @@ class DecisionEngine:
             )
             
         if token_count > self.ai_threshold:
+            if expected_savings is not None and ai_cost is not None and ai_cost > expected_savings:
+                return DecisionResult(
+                    action=OptimizationAction.SKIP,
+                    reason="AI optimization costs exceed expected savings."
+                )
             return DecisionResult(
                 action=OptimizationAction.AI_OPTIMIZE,
                 reason=f"Token count ({token_count}) exceeds the AI threshold ({self.ai_threshold}). Applying aggressive AI compression."
