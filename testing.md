@@ -10,7 +10,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 05 → Optimization Metrics
 - [x] TEST 06 → Optimization Decision Engine
 - [x] TEST 07 → Exact Cache
-- [ ] TEST 08 → Cache Normalization
+- [x] TEST 08 → Cache Normalization
 - [ ] TEST 09 → Context Manager
 - [ ] TEST 10 → Provider Layer
 - [ ] TEST 11 → Complete MVP Pipeline
@@ -878,4 +878,27 @@ tests/unit/cache/test_exact.py::test_error_handling_redis PASSED         [100%]
 ============================= 18 passed in 0.81s ==============================
 ```
 </details>
+</details>
+
+<details>
+<summary><b>Testing T8 (Cache Normalization)</b></summary>
+
+**Status: PASS**
+
+#### 1. Core Implementation
+- **Status**: PASSED
+- **Verification**: Created `normalize_prompt(prompt: str)` in `app/cache/hasher.py` to ensure that exact caching matches semantically identical string cases.
+- **Rules applied**:
+  1. Converted strings to lowercase.
+  2. Stripped leading and trailing whitespaces.
+  3. Collapsed multiple whitespaces (and newlines) into a single space using regex `\s+`.
+
+#### 2. Regression Testing
+- **Status**: PASSED
+- **Verification**: Added `test_hash_normalization()` to `tests/unit/cache/test_hasher.py`. Validated that `hash_prompt("Hello World") == hash_prompt("hello world")` and handles arbitrary trailing spaces and internal newlines seamlessly.
+
+#### 3. Final Report
+- **Commands executed**: `uv run pytest tests/unit/cache/test_hasher.py -v`
+- **Tests executed**: 4 tests.
+- **Remaining issues**: None.
 </details>
