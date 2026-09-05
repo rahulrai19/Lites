@@ -41,7 +41,18 @@ async def lifespan(app: FastAPI):
     ai_engine = AIOptimizerEngine(tokenizer)
     decision_engine = DecisionEngine()
     multiplexer = HTTPMultiplexer()
-    telemetry = TelemetryTracker()
+    try:
+        from motor.motor_asyncio import AsyncIOMotorClient
+    except ImportError:
+        AsyncIOMotorClient = None
+
+    mongo_client = None
+    if env.MONGO_URI and AsyncIOMotorClient:
+        mongo_client = AsyncIOMotorClient(env.MONGO_URI)
+        print("Lites is running with MongoDB Metrics Persistence!")
+        
+    telemetry = TelemetryTracker(mongo_client=mongo_client)
+    await telemetry.initialize()
     
     engine = LitesCoreEngine(
         exact_cache=exact_cache,
@@ -55,7 +66,9 @@ async def lifespan(app: FastAPI):
         telemetry=telemetry
     )
     yield
-    # Cleanup if necessary
+    # Cleanup
+    if telemetry:
+        await telemetry.shutdown()
 
 from fastapi.middleware.cors import CORSMiddleware
 

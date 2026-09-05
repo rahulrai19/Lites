@@ -22,6 +22,9 @@ class Env(BaseSettings):
     REDIS_URL: Optional[str] = None
     CACHE_TTL_SECONDS: int = 3600
     
+    # MongoDB configuration
+    MONGO_URI: Optional[str] = None
+    
     # Authentication
     LITES_API_KEY: Optional[str] = None
     
