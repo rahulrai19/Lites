@@ -11,7 +11,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 06 → Optimization Decision Engine
 - [x] TEST 07 → Exact Cache
 - [x] TEST 08 → Cache Normalization
-- [ ] TEST 09 → Context Manager
+- [x] TEST 09 → Context Manager
 - [ ] TEST 10 → Provider Layer
 - [ ] TEST 11 → Complete MVP Pipeline
 - [ ] TEST 12 → AI Prompt Optimizer
@@ -900,5 +900,31 @@ tests/unit/cache/test_exact.py::test_error_handling_redis PASSED         [100%]
 #### 3. Final Report
 - **Commands executed**: `uv run pytest tests/unit/cache/test_hasher.py -v`
 - **Tests executed**: 4 tests.
+- **Remaining issues**: None.
+</details>
+
+<details>
+<summary><b>Testing T9 (Context Manager)</b></summary>
+
+**Status: PASS**
+
+#### 1. Core Logic Verification
+- **Status**: PASSED
+- **Verification**: Verified `app/models/context.py` which defines `ContextProfile` (DEFAULT, CODE, LEGAL, CHAT). Examined `RuleOptimizerEngine` to ensure it skips dynamically configured `disabled_rules` depending on the selected profile (e.g., `normalize_whitespace` is skipped for `CODE`).
+
+#### 2. Regression Testing
+- **Status**: PASSED
+- **Verification**: Ran the pre-existing `tests/unit/optimizer/test_context.py` test suite. Validated three distinct contexts:
+  - `test_context_code_skips_whitespace`: Preserves exact Python code indentation.
+  - `test_context_legal_skips_fillers`: Preserves verbose phrasing and polite fillers in legal documents.
+  - `test_context_chat_applies_all`: Aggressively optimizes all rules.
+
+#### 3. Integration Safety
+- **Status**: PASSED
+- **Verification**: Ensured that `app/api/server.py` safely falls back to `ContextProfile.DEFAULT` when the frontend sends an invalid or missing `X-Lites-Context` header, preventing application crashes.
+
+#### 4. Final Report
+- **Commands executed**: `uv run pytest tests/unit/optimizer/test_context.py -v`
+- **Tests executed**: 3 tests.
 - **Remaining issues**: None.
 </details>
