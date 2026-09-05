@@ -2,8 +2,7 @@ import time
 import requests
 import sys
 
-def test_cache(port):
-    url = f"http://localhost:{port}/v1/chat/completions"
+def test_cache(url):
     headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer test-lites-key"
@@ -16,7 +15,7 @@ def test_cache(port):
         ]
     }
     
-    print(f"Testing Lites API on port {port}...")
+    print(f"Testing Lites API on {url}...")
     
     # Request 1 (Cache Miss)
     print("\n--- Request 1 (Expected Miss) ---")
@@ -28,7 +27,7 @@ def test_cache(port):
             print(response.text)
             return False
     except requests.exceptions.ConnectionError:
-        print(f"Connection refused on port {port}")
+        print(f"Connection refused on {url}")
         return False
         
     duration1 = (time.perf_counter() - start) * 1000
@@ -49,5 +48,4 @@ def test_cache(port):
     print(f"Cache Hit was {duration1 / duration2:.2f}x faster!")
     return True
 
-if not test_cache(8001):
-    test_cache(8000)
+test_cache("https://lites-su1c.onrender.com/v1/chat/completions")
