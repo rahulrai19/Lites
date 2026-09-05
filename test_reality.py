@@ -8,7 +8,7 @@ def test_cache(url):
         "Authorization": "Bearer test-lites-key"
     }
     payload = {
-        "model": "gpt-4o-mini",
+        "model": "gemini-1.5-flash",
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What is the capital of Japan? Please answer in one word."}
@@ -48,4 +48,4 @@ def test_cache(url):
     print(f"Cache Hit was {duration1 / duration2:.2f}x faster!")
     return True
 
-test_cache("https://lites-su1c.onrender.com/v1/chat/completions")
+test_cache("http://localhost:8000/v1/chat/completions")

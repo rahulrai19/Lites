@@ -16,9 +16,6 @@ class HTTPMultiplexer(LLMClient):
                 if model.startswith("gemini") or "antigravity" in model or "deep-research" in model:
                     if not env.GEMINI_API_KEY:
                         return f"Error: GEMINI_API_KEY not set for model {model}"
-                    
-                    if env.GEMINI_API_KEY.startswith("AQ."):
-                        return f"Mocked Gemini Response for: {prompt[:20]}... (Internal API Key)"
                         
                     response = await client.post(
                         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={env.GEMINI_API_KEY}",

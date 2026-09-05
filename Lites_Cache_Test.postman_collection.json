@@ -49,7 +49,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"model\": \"gpt-4o\",\n    \"messages\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are a helpful assistant.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"What are the benefits of exact caching?\"\n        }\n    ]\n}",
+					"raw": "{\n    \"model\": \"gemini-1.5-flash\",\n    \"messages\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are a helpful assistant.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"What are the benefits of exact caching? Please explain in detail.\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -116,7 +116,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"model\": \"gpt-4o\",\n    \"messages\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are a helpful assistant.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"What are the benefits of exact caching?\"\n        }\n    ]\n}",
+					"raw": "{\n    \"model\": \"gemini-1.5-flash\",\n    \"messages\": [\n        {\n            \"role\": \"system\",\n            \"content\": \"You are a helpful assistant.\"\n        },\n        {\n            \"role\": \"user\",\n            \"content\": \"What are the benefits of exact caching? Please explain in detail.\"\n        }\n    ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
