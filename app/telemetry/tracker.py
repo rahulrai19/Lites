@@ -32,11 +32,11 @@ class TelemetryTracker:
                 if doc:
                     doc.pop("_id", None)
                     self._metrics = TelemetryMetrics(**doc)
-                
-                # Start background sync task
-                self._sync_task = asyncio.create_task(self._sync_loop())
             except Exception as e:
                 print(f"Failed to initialize MongoDB metrics: {e}")
+            
+            # Start background sync task regardless of initial load success
+            self._sync_task = asyncio.create_task(self._sync_loop())
 
     async def shutdown(self):
         """Ensures final metrics are flushed on shutdown."""
