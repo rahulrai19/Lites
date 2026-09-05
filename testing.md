@@ -878,10 +878,13 @@ tests/unit/cache/test_exact.py::test_error_handling_redis PASSED         [100%]
 ============================= 18 passed in 0.81s ==============================
 ```
 </details>
-</details>
+
+---
+
+### TEST 08 → Cache Normalization
 
 <details>
-<summary><b>Testing T8 (Cache Normalization)</b></summary>
+<summary><b>Testing T8</b></summary>
 
 **Status: PASS**
 
@@ -903,8 +906,12 @@ tests/unit/cache/test_exact.py::test_error_handling_redis PASSED         [100%]
 - **Remaining issues**: None.
 </details>
 
+---
+
+### TEST 09 → Context Manager
+
 <details>
-<summary><b>Testing T9 (Context Manager)</b></summary>
+<summary><b>Testing T9</b></summary>
 
 **Status: PASS**
 
