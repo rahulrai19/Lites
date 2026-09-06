@@ -7,7 +7,7 @@ def normalize_prompt(prompt: str) -> str:
     and condensing multiple internal whitespaces/newlines into a single space.
     This prevents cache misses for logically identical prompts (e.g. 'Hello' vs 'hello  ').
     """
-    prompt = prompt.lower().strip()
+    prompt = prompt.strip()
     return re.sub(r'\s+', ' ', prompt)
 
 def hash_prompt(prompt: str, model: str) -> str:
