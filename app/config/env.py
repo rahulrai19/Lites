@@ -12,6 +12,7 @@ class Env(BaseSettings):
     # Optimization Thresholds
     MIN_TOKENS_FOR_OPTIMIZATION: int = 50
     MAX_TOKENS_FOR_OPTIMIZATION: int = 128000
+    MAX_MESSAGES_IN_CONTEXT: int = 10
     
     # AI Optimization configuration
     AI_OPTIMIZE_THRESHOLD: int = 500

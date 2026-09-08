@@ -17,14 +17,16 @@ from app.optimizer.engine import RuleOptimizerEngine
 from app.optimizer.ai_engine import AIOptimizerEngine
 from app.models.context import ContextProfile
 from app.telemetry.tracker import TelemetryTracker, TelemetryMetrics
+from app.core.context_manager import ConversationContextManager
 
 # Global engine and telemetry instances
 engine: LitesCoreEngine = None
 telemetry: TelemetryTracker = None
+context_manager: ConversationContextManager = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global engine, telemetry
+    global engine, telemetry, context_manager
     # Initialize components
     if env.REDIS_URL:
         exact_cache = RedisCache(env.REDIS_URL)
@@ -41,6 +43,7 @@ async def lifespan(app: FastAPI):
     ai_engine = AIOptimizerEngine(tokenizer)
     decision_engine = DecisionEngine()
     multiplexer = HTTPMultiplexer()
+    context_manager = ConversationContextManager(tokenizer)
     try:
         from motor.motor_asyncio import AsyncIOMotorClient
     except ImportError:
@@ -91,9 +94,13 @@ async def health_check():
 
 @app.post("/v1/chat/completions", response_model=ChatCompletionResponse, dependencies=[Depends(verify_api_key)])
 async def chat_completions(request: ChatCompletionRequest, response: Response):
-    # Combine messages into a single string for optimization
-    # In a real production proxy, we would preserve message boundaries.
-    full_prompt = "\n".join([msg.content for msg in request.messages])
+    # Combine messages using the ConversationContextManager to respect limits
+    full_prompt = await context_manager.process(
+        messages=request.messages,
+        model=request.model,
+        max_tokens=env.MAX_TOKENS_FOR_OPTIMIZATION,
+        max_messages=env.MAX_MESSAGES_IN_CONTEXT
+    )
     
     # Parse context profile
     try:

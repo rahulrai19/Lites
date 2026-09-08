@@ -1048,20 +1048,54 @@ STOP after this test.
 
 ---
 
-### TEST 09 → Context Manager
+### TEST 09 → Context Management
 
 <details>
 <summary><b>Test Parameters & Prompt</b></summary>
 
 ```markdown
-# LITES TEST 09 — CONTEXT MANAGER
+# LITES TEST 09 — CONTEXT MANAGEMENT
 
 ## Objective
-Verify that the optimizer respects dynamic context profiles.
 
-## Required behavior
-The engine must disable certain optimization rules based on the provided `X-Lites-Context` profile (e.g. disabling whitespace stripping for CODE context).
-Unrecognized contexts must safely fall back to DEFAULT.
+Verify that Lites can control conversation context without unnecessarily removing required information.
+
+Test:
+
+* empty conversation
+* one message
+* multiple messages
+* conversation exceeding message limit
+* conversation exceeding token limit
+* both limits exceeded
+* system message
+* recent messages
+* long individual message
+
+## Verify
+
+The context manager must:
+
+* respect token budget
+* respect message limits
+* preserve required system information
+* preserve the current request
+* retain configured recent messages
+* behave deterministically where expected
+
+## Boundary tests
+
+Test:
+
+limit - 1
+limit
+limit + 1
+
+for both message and token limits.
+
+## Important
+
+Do not claim semantic relevance unless the implementation actually performs semantic selection.
 
 STOP after this test.
 ```
@@ -1070,29 +1104,30 @@ STOP after this test.
 <details>
 <summary><b>Testing T9</b></summary>
 
-**Status: PASS**
+**Status: PASS (with major refactor)**
 
-#### 1. Core Logic Verification
-
-- **Status**: PASSED
-- **Verification**: Verified `app/models/context.py` which defines `ContextProfile` (DEFAULT, CODE, LEGAL, CHAT). Examined `RuleOptimizerEngine` to ensure it skips dynamically configured `disabled_rules` depending on the selected profile (e.g., `normalize_whitespace` is skipped for `CODE`).
-
-#### 2. Regression Testing
+#### 1. Core Architecture Changes
 
 - **Status**: PASSED
-- **Verification**: Ran the pre-existing `tests/unit/optimizer/test_context.py` test suite. Validated three distinct contexts:
-  - `test_context_code_skips_whitespace`: Preserves exact Python code indentation.
-  - `test_context_legal_skips_fillers`: Preserves verbose phrasing and polite fillers in legal documents.
-  - `test_context_chat_applies_all`: Aggressively optimizes all rules.
+- **Refactor**: Discovered that Lites previously flattened all requests via `"\n".join(messages)`, allowing the optimization pipeline to arbitrarily truncate strings exactly at the token budget. This dangerously risked cutting off system messages or the user's latest question.
+- **Fixes Made**: 
+  - Implemented `ConversationContextManager` in `app/core/context_manager.py`.
+  - Used `asyncio.gather` with the `TokenCounter` to concurrently compute exact token overhead for every incoming message.
+  - Built a sliding window that permanently anchors `messages[0]` (if it's a System prompt) and `messages[-1]` (the latest request). It iteratively adds recent context (newest to oldest) until either `max_tokens` or `max_messages` is exhausted.
+  - Intercepted `app/api/server.py` to use `await context_manager.process(...)` to deterministically construct the exact safe prompt boundary.
 
-#### 3. Integration Safety
+#### 2. Verification & Boundary Testing
 
 - **Status**: PASSED
-- **Verification**: Ensured that `app/api/server.py` safely falls back to `ContextProfile.DEFAULT` when the frontend sends an invalid or missing `X-Lites-Context` header, preventing application crashes.
+- **Verification**: Built comprehensive regression suite `tests/unit/core/test_context_manager.py`.
+  - **Limits**: Passed `test_message_limit_exceeded` and `test_token_limit_exceeded`, successfully dropping intermediate `assistant` and `user` history when budget is exhausted.
+  - **Anchors**: Asserted that the "SYS" anchor and "Final question" anchor ALWAYS survive limit exhaustion.
+  - **Boundaries**: Added tests for `limit - 1`, `limit`, and `limit + 1` for both `max_messages` and `max_tokens`. Demonstrated that the window securely drops the exact trailing boundary message without error.
+  - **Long Individual Message**: If a single incoming request violates the entire limit by itself, it correctly preserves the string rather than arbitrarily severing it in half, safely delegating the ContextLength error downstream to the LLM (matching standard OpenAI API proxy behavior).
 
-#### 4. Final Report
+#### 3. Final Report
 
-- **Commands executed**: `uv run pytest tests/unit/optimizer/test_context.py -v`
-- **Tests executed**: 3 tests.
+- **Commands executed**: `uv run pytest tests/unit/core/test_context_manager.py -v`
+- **Tests executed**: 9 tests.
 - **Remaining issues**: None.
 </details>
