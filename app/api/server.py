@@ -18,6 +18,8 @@ from app.optimizer.ai_engine import AIOptimizerEngine
 from app.models.context import ContextProfile
 from app.telemetry.tracker import TelemetryTracker, TelemetryMetrics
 from app.core.context_manager import ConversationContextManager
+from app.core.exceptions import ProviderError
+from fastapi.responses import JSONResponse
 
 # Global engine and telemetry instances
 engine: LitesCoreEngine = None
@@ -86,6 +88,13 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["X-Lites-Status", "X-Lites-Latency-Ms"]
 )
+
+@app.exception_handler(ProviderError)
+async def provider_exception_handler(request, exc: ProviderError):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": "provider_error", "message": exc.message, "provider": exc.provider}
+    )
 
 @app.get("/health")
 async def health_check():
