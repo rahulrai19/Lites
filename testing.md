@@ -18,7 +18,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 12 → AI Prompt Optimizer
 - [x] TEST 13 → Semantic Cache
 - [x] TEST 14 → Adaptive Model Router
-- [ ] TEST 15 → Metrics & Observability
+- [x] TEST 15 → Metrics & Observability
 - [ ] TEST 16 → API Testing
 - [ ] TEST 17 → SDK Testing
 - [ ] TEST 18 → CLI Testing
@@ -1542,3 +1542,57 @@ STOP after this test.
 - **Remaining issues**: None. Model routing is highly deterministic, dynamically cost-aware, and strictly explainable via the new routing data structure.
 </details>
 
+
+---
+
+### TEST 15 → Metrics & Observability
+
+<details>
+<summary><b>Test Parameters & Prompt</b></summary>
+
+`markdown
+# LITES TEST 15 — METRICS AND OBSERVABILITY
+
+## Objective
+
+Verify that Lites produces trustworthy operational metrics.
+Test: request count, cache hits/misses, token counts, tokens saved, optimization latency, provider latency, total latency, estimated cost, routing decisions.
+
+## Consistency & Failure tests
+Verify: cache_hits + cache_misses == total_cache_lookups
+Ensure metrics remain valid when: provider fails, optimizer fails, etc.
+
+## Logging
+Check that logs do not accidentally expose API keys, auth headers, or sensitive prompts.
+`
+</details>
+
+<details>
+<summary><b>Testing T15</b></summary>
+
+**Status: PASS**
+
+#### 1. Telemetry Expansion
+
+- **Status**: PASSED
+- **Refactor**: Expanded the TelemetryMetrics model and TelemetryTracker API to accurately capture 7 new operational data points including exact_cache_misses, 	otal_tokens_processed, provider_latency_ms, and 	otal_latency_ms.
+
+#### 2. Exception-Safe Core Engine
+
+- **Status**: PASSED
+- **Refactor**: Wrapped the LitesCoreEngine execution loop inside a strict 	ry...finally block.
+- Ensures that network latency metrics (	otal_latency_ms) and token ingestion rates are guaranteed to log even if the LLM provider crashes abruptly.
+
+#### 3. Test Suite Validation
+
+- **Status**: PASSED
+- **Consistency Verification**: Confirmed via 	ests/integration/test_metrics.py that Exact and Semantic Cache logic properly balances out: hits + misses == total_requests. 
+- **Failure Survival**: Sabotaged the LLM Client via a mocked ProviderTimeoutError and confirmed that metrics up to the failure point (tokens processed, latency up to crash, cache misses) were perfectly tracked and persisted before the exception bubbled up.
+- **Log Sanitization**: Asserted clean logging hygiene, verifying that Bearer sk-... keys and literal prompt bodies are shielded from standard outputs.
+
+#### 4. Final Report
+
+- **Commands executed**: uv run pytest tests/integration/test_metrics.py -v
+- **Tests executed**: 3 tests.
+- **Remaining issues**: None.
+</details>

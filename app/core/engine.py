@@ -45,95 +45,103 @@ class LitesCoreEngine:
     async def execute(self, prompt: str, model: str, context: Optional[ContextProfile] = None) -> str:
         """
         The central Lites orchestration pipeline.
-        1. Exact Cache Check
-        2. Semantic Cache Check
-        3. Token Counting & Optimization Decision
-        4. Apply Optimization (Rule, AI, Context)
-        5. Adaptive Model Routing
-        6. Execute via LLM Client
-        7. Store Result in Cache
+        Wrapped in try/finally to ensure telemetry integrity on provider failures.
         """
-        # --- 1. Exact Cache Check ---
+        start_total_time = time.time()
         if self.telemetry:
             await self.telemetry.record_request()
             
-        prompt_hash = hash_prompt(prompt, model)
-        exact_hit = await self.exact_cache.get(prompt_hash)
-        if exact_hit:
-            if self.telemetry:
-                await self.telemetry.record_exact_cache_hit()
-            return exact_hit.response
-
-        # --- 2. Semantic Cache Check ---
-        embedding = await self.embedder.get_embedding(prompt)
-        if embedding:
-            semantic_hit = await self.semantic_cache.search(embedding, model)
-            if semantic_hit:
+        try:
+            # --- 1. Exact Cache Check ---
+            prompt_hash = hash_prompt(prompt, model)
+            exact_hit = await self.exact_cache.get(prompt_hash)
+            if exact_hit:
                 if self.telemetry:
-                    await self.telemetry.record_semantic_cache_hit()
-                return semantic_hit.response
-
-        # --- 3. Token Counting & Decision ---
-        count_result = await self.token_counter.count_tokens(prompt, model)
-        token_count = count_result.token_count
-        
-        # Estimate expected savings (empirical average ~30% reduction)
-        expected_savings = int(token_count * 0.3)
-        
-        # Estimate AI cost based on model tier relative to Gemini Flash Lite
-        # (Using tokens as a proxy for cost. Cheap models like gpt-4o-mini make AI optimization relatively expensive)
-        if "mini" in model.lower() or "haiku" in model.lower() or "flash" in model.lower():
-            ai_cost = int(token_count * 2.0)  # Cost exceeds savings
-        else:
-            ai_cost = int(token_count * 0.1)  # Cost is minimal compared to expensive target models
-
-        decision = self.decision_engine.evaluate(token_count, expected_savings=expected_savings, ai_cost=ai_cost)
-        
-        # --- 4. Optimization ---
-        optimized_prompt = prompt
-        
-        start_opt_time = time.time()
-        if decision.action == OptimizationAction.RULE_OPTIMIZE:
-            optimized_prompt, metadata = await self.rule_engine.optimize(prompt, model, context)
-            if self.telemetry:
-                await self.telemetry.record_rule_savings(metadata.tokens_saved)
-        elif decision.action == OptimizationAction.AI_OPTIMIZE:
-            optimized_prompt, metadata = await self.ai_engine.optimize(prompt, model, context)
-            if self.telemetry:
-                await self.telemetry.record_ai_savings(metadata.tokens_saved)
-        elif decision.action == OptimizationAction.CONTEXT_COMPRESS:
-            # Simple truncation for Context Compression (In real app, this would be a smart summarization)
-            limit = self.decision_engine.max_tokens * 3  # rough char estimate
-            if len(prompt) > limit:
-                optimized_prompt = prompt[:limit] + "\n...[Context Compressed by Lites]..."
+                    await self.telemetry.record_exact_cache_hit()
+                return exact_hit.response
+            else:
                 if self.telemetry:
-                    # Rough token savings estimate
-                    await self.telemetry.record_ai_savings(max(0, token_count - self.decision_engine.max_tokens))
+                    await self.telemetry.record_exact_cache_miss()
+
+            # --- 2. Semantic Cache Check ---
+            embedding = await self.embedder.get_embedding(prompt)
+            if embedding:
+                semantic_hit = await self.semantic_cache.search(embedding, model)
+                if semantic_hit:
+                    if self.telemetry:
+                        await self.telemetry.record_semantic_cache_hit()
+                    return semantic_hit.response
+                else:
+                    if self.telemetry:
+                        await self.telemetry.record_semantic_cache_miss()
+
+            # --- 3. Token Counting & Decision ---
+            count_result = await self.token_counter.count_tokens(prompt, model)
+            token_count = count_result.token_count
+            
+            if self.telemetry:
+                await self.telemetry.record_tokens_processed(token_count)
+            
+            expected_savings = int(token_count * 0.3)
+            if "mini" in model.lower() or "haiku" in model.lower() or "flash" in model.lower():
+                ai_cost = int(token_count * 2.0)
+            else:
+                ai_cost = int(token_count * 0.1)
+
+            decision = self.decision_engine.evaluate(token_count, expected_savings=expected_savings, ai_cost=ai_cost)
+            
+            # --- 4. Optimization ---
+            optimized_prompt = prompt
+            
+            start_opt_time = time.time()
+            if decision.action == OptimizationAction.RULE_OPTIMIZE:
+                optimized_prompt, metadata = await self.rule_engine.optimize(prompt, model, context)
+                if self.telemetry:
+                    await self.telemetry.record_rule_savings(metadata.tokens_saved)
+            elif decision.action == OptimizationAction.AI_OPTIMIZE:
+                optimized_prompt, metadata = await self.ai_engine.optimize(prompt, model, context)
+                if self.telemetry:
+                    await self.telemetry.record_ai_savings(metadata.tokens_saved)
+            elif decision.action == OptimizationAction.CONTEXT_COMPRESS:
+                limit = self.decision_engine.max_tokens * 3
+                if len(prompt) > limit:
+                    optimized_prompt = prompt[:limit] + "\n...[Context Compressed by Lites]..."
+                    if self.telemetry:
+                        await self.telemetry.record_ai_savings(max(0, token_count - self.decision_engine.max_tokens))
+                    
+            if self.telemetry and decision.action != OptimizationAction.SKIP:
+                overhead_ms = int((time.time() - start_opt_time) * 1000)
+                await self.telemetry.record_overhead(overhead_ms)
                 
-        if self.telemetry and decision.action != OptimizationAction.SKIP:
-            overhead_ms = int((time.time() - start_opt_time) * 1000)
-            await self.telemetry.record_overhead(overhead_ms)
+            # --- 5. Adaptive Model Routing ---
+            routing_decision = self.router.route(optimized_prompt, model, token_count, context)
+            routed_model = routing_decision.selected_model
             
-        # --- 5. Adaptive Model Routing ---
-        routing_decision = self.router.route(optimized_prompt, model, token_count, context)
-        routed_model = routing_decision.selected_model
-        
-        if self.telemetry and routing_decision.did_route:
-            # We could record cost savings here
-            pass
+            if self.telemetry and routing_decision.did_route:
+                await self.telemetry.record_routing_redirect()
+                await self.telemetry.record_cost_saved(routing_decision.estimated_cost_saved)
+                
+            # --- 6. Execute via LLM Client ---
+            start_provider_time = time.time()
+            response_text = await self.llm_client.execute(optimized_prompt, routed_model)
+            if self.telemetry:
+                provider_ms = int((time.time() - start_provider_time) * 1000)
+                await self.telemetry.record_provider_latency(provider_ms)
             
-        # --- 6. Execute via LLM Client ---
-        response_text = await self.llm_client.execute(optimized_prompt, routed_model)
-        
-        # --- 7. Store Result in Cache ---
-        new_entry = CacheEntry(
-            response=response_text,
-            model=model, # We cache it under the ORIGINAL model requested, transparent to user
-            timestamp=datetime.now()
-        )
-        await self.exact_cache.set(prompt_hash, new_entry)
-        
-        if embedding:
-            await self.semantic_cache.store(embedding, model, new_entry)
+            # --- 7. Store Result in Cache ---
+            new_entry = CacheEntry(
+                response=response_text,
+                model=model,
+                timestamp=datetime.now()
+            )
+            await self.exact_cache.set(prompt_hash, new_entry)
             
-        return response_text
+            if embedding:
+                await self.semantic_cache.store(embedding, model, new_entry)
+                
+            return response_text
+            
+        finally:
+            if self.telemetry:
+                total_ms = int((time.time() - start_total_time) * 1000)
+                await self.telemetry.record_total_latency(total_ms)

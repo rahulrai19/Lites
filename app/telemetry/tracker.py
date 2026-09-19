@@ -7,10 +7,17 @@ from pydantic import BaseModel
 class TelemetryMetrics(BaseModel):
     total_requests: int = 0
     exact_cache_hits: int = 0
+    exact_cache_misses: int = 0
     semantic_cache_hits: int = 0
+    semantic_cache_misses: int = 0
+    total_tokens_processed: int = 0
     tokens_saved_by_rules: int = 0
     tokens_saved_by_ai: int = 0
     total_optimization_overhead_ms: int = 0
+    provider_latency_ms: int = 0
+    total_latency_ms: int = 0
+    total_estimated_cost_saved: float = 0.0
+    total_routing_redirects: int = 0
 
 class TelemetryTracker:
     def __init__(self, mongo_client=None):
@@ -80,11 +87,26 @@ class TelemetryTracker:
             self._metrics.exact_cache_hits += 1
             self._dirty = True
             
+    async def record_exact_cache_miss(self):
+        async with self._lock:
+            self._metrics.exact_cache_misses += 1
+            self._dirty = True
+            
     async def record_semantic_cache_hit(self):
         async with self._lock:
             self._metrics.semantic_cache_hits += 1
             self._dirty = True
             
+    async def record_semantic_cache_miss(self):
+        async with self._lock:
+            self._metrics.semantic_cache_misses += 1
+            self._dirty = True
+            
+    async def record_tokens_processed(self, tokens: int):
+        async with self._lock:
+            self._metrics.total_tokens_processed += tokens
+            self._dirty = True
+
     async def record_rule_savings(self, tokens: int):
         async with self._lock:
             self._metrics.tokens_saved_by_rules += max(0, tokens)
@@ -98,6 +120,26 @@ class TelemetryTracker:
     async def record_overhead(self, ms: int):
         async with self._lock:
             self._metrics.total_optimization_overhead_ms += ms
+            self._dirty = True
+            
+    async def record_provider_latency(self, ms: int):
+        async with self._lock:
+            self._metrics.provider_latency_ms += ms
+            self._dirty = True
+            
+    async def record_total_latency(self, ms: int):
+        async with self._lock:
+            self._metrics.total_latency_ms += ms
+            self._dirty = True
+            
+    async def record_cost_saved(self, cost: float):
+        async with self._lock:
+            self._metrics.total_estimated_cost_saved += max(0.0, cost)
+            self._dirty = True
+            
+    async def record_routing_redirect(self):
+        async with self._lock:
+            self._metrics.total_routing_redirects += 1
             self._dirty = True
             
     def get_metrics(self) -> TelemetryMetrics:
