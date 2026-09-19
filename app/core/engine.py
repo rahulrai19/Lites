@@ -76,7 +76,18 @@ class LitesCoreEngine:
         # --- 3. Token Counting & Decision ---
         count_result = await self.token_counter.count_tokens(prompt, model)
         token_count = count_result.token_count
-        decision = self.decision_engine.evaluate(token_count)
+        
+        # Estimate expected savings (empirical average ~30% reduction)
+        expected_savings = int(token_count * 0.3)
+        
+        # Estimate AI cost based on model tier relative to Gemini Flash Lite
+        # (Using tokens as a proxy for cost. Cheap models like gpt-4o-mini make AI optimization relatively expensive)
+        if "mini" in model.lower() or "haiku" in model.lower() or "flash" in model.lower():
+            ai_cost = int(token_count * 2.0)  # Cost exceeds savings
+        else:
+            ai_cost = int(token_count * 0.1)  # Cost is minimal compared to expensive target models
+
+        decision = self.decision_engine.evaluate(token_count, expected_savings=expected_savings, ai_cost=ai_cost)
         
         # --- 4. Optimization ---
         optimized_prompt = prompt
