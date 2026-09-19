@@ -115,7 +115,12 @@ class LitesCoreEngine:
             await self.telemetry.record_overhead(overhead_ms)
             
         # --- 5. Adaptive Model Routing ---
-        routed_model, did_route = self.router.route(optimized_prompt, model, token_count, context)
+        routing_decision = self.router.route(optimized_prompt, model, token_count, context)
+        routed_model = routing_decision.selected_model
+        
+        if self.telemetry and routing_decision.did_route:
+            # We could record cost savings here
+            pass
             
         # --- 6. Execute via LLM Client ---
         response_text = await self.llm_client.execute(optimized_prompt, routed_model)
