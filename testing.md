@@ -19,7 +19,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 13 → Semantic Cache
 - [x] TEST 14 → Adaptive Model Router
 - [x] TEST 15 → Metrics & Observability
-- [ ] TEST 16 → API Testing
+- [x] TEST 16 → API Testing
 - [ ] TEST 17 → SDK Testing
 - [ ] TEST 18 → CLI Testing
 - [ ] TEST 19 → Performance/Load Testing
@@ -1594,5 +1594,56 @@ Check that logs do not accidentally expose API keys, auth headers, or sensitive 
 
 - **Commands executed**: uv run pytest tests/integration/test_metrics.py -v
 - **Tests executed**: 3 tests.
+- **Remaining issues**: None.
+</details>
+
+---
+
+### TEST 16 → FastAPI API Testing
+
+<details>
+<summary><b>Test Parameters & Prompt</b></summary>
+
+`markdown
+# LITES TEST 16 — FASTAPI API TESTING
+
+## Objective
+
+Test Lites through its public HTTP API.
+Use HTTPX/TestClient rather than requiring real external services.
+
+## Test:
+valid request, missing fields, invalid fields, empty request, oversized request, malformed JSON, authentication, error responses, health endpoint.
+
+## Verify
+HTTP status codes are appropriate, response schemas match Pydantic models, errors are structured and predictable.
+Verify the HTTP layer does not bypass core Lites logic.
+`
+</details>
+
+<details>
+<summary><b>Testing T16</b></summary>
+
+**Status: PASS**
+
+#### 1. API Hardening (Oversized Requests)
+
+- **Status**: PASSED
+- **Refactor**: Added Field(..., max_length=500_000) constraints to the Pydantic ChatMessage model.
+- **Verification**: This ensures that malicious or mistakenly massive prompt injection payloads are blocked natively by FastAPI with an instant 422 Unprocessable Entity, protecting the Lites Optimization pipeline from Out-Of-Memory (OOM) crashes.
+
+#### 2. Comprehensive TestClient Suite
+
+- **Status**: PASSED
+- **Verification**: Built 	ests/integration/test_api.py.
+  - **Health / Auth**: Verified GET /health routes work smoothly without auth, while missing or invalid Authorization: Bearer <key> headers securely return 401 Unauthorized.
+  - **Validation Constraints**: Fired malformed JSON, missing fields, and mismatched types. Asserted fast 422 rejections. Fired a 500,001 character prompt to verify the oversized constraint block.
+  - **Core Integration**: Passed a valid request into TestClient while mocking engine.execute(). Asserted engine.execute() was called (verifying the core logic is not bypassed), and verified the standard ChatCompletionResponse schema was returned along with X-Lites-Status headers.
+  - **Provider Bubbling**: Forced the mocked engine to raise a ProviderError(status_code=502). Asserted that the API layer gracefully trapped it and returned a properly structured JSON 502 Bad Gateway to the client.
+
+#### 3. Final Report
+
+- **Commands executed**: uv run pytest tests/integration/test_api.py -v
+- **Tests executed**: 10 tests.
 - **Remaining issues**: None.
 </details>

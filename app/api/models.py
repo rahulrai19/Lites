@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Any
 
 class ChatMessage(BaseModel):
     role: str
-    content: str
+    content: str = Field(..., max_length=500_000)
 
 class ChatCompletionRequest(BaseModel):
     model: str
