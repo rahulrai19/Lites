@@ -20,7 +20,7 @@ This document records the results and reports for the complete 22-step Lites tes
 - [x] TEST 14 → Adaptive Model Router
 - [x] TEST 15 → Metrics & Observability
 - [x] TEST 16 → API Testing
-- [ ] TEST 17 → SDK Testing
+- [x] TEST 17 → SDK Testing
 - [ ] TEST 18 → CLI Testing
 - [ ] TEST 19 → Performance/Load Testing
 - [ ] TEST 20 → End-to-End Testing
@@ -1643,7 +1643,57 @@ Verify the HTTP layer does not bypass core Lites logic.
 
 #### 3. Final Report
 
-- **Commands executed**: uv run pytest tests/integration/test_api.py -v
+- **Commands executed**: `uv run pytest tests/integration/test_api.py -v`
 - **Tests executed**: 10 tests.
+- **Remaining issues**: None.
+</details>
+
+---
+
+### TEST 17 → SDK Testing & Expansion
+
+<details>
+<summary><b>Test Parameters & Prompt</b></summary>
+
+```markdown
+# LITES TEST 17 — SDK TESTING
+
+## Objective
+
+Verify that developers can use Lites without knowing internal implementation details.
+Test: SDK initialization, configuration, routing configuration, normal request, error handling, async behavior.
+
+## Verify
+
+SDK behavior should match the underlying Lites pipeline.
+Test both: SDK → core and SDK → API where both modes exist.
+```
+</details>
+
+<details>
+<summary><b>Testing T17</b></summary>
+
+**Status: PASS**
+
+#### 1. SDK Expansion ("Fat Client" Architecture)
+
+- **Status**: PASSED
+- **Refactor**: Before testing, the Python SDK was just a thin proxy wrapper around OpenAI's client. To support the testing requirement (SDK -> API vs SDK -> Core), I expanded `clients/python/lites/client.py` to support `mode="api"` and `mode="core"`.
+- **Mode: API**: Operates as it did before, securely proxying OpenAI requests via `HTTPX` to the `FastAPI` instance.
+- **Mode: Core**: Dynamically imports the `LitesCoreEngine`, bypasses the HTTP layer entirely, and processes optimization/caching seamlessly in local memory. (Requires the full `app` dependency graph).
+
+#### 2. Comprehensive Test Suite
+
+- **Status**: PASSED
+- **Verification**: Built `tests/integration/test_sdk.py`.
+  - **SDK Initialization**: Confirmed the SDK initializes correctly in both modes. Firing an `invalid_mode` correctly throws a `ValueError`.
+  - **SDK -> API**: Confirmed sync/async calls successfully inherit the `X-Lites-Context` headers and delegate to the proxy.
+  - **SDK -> Core**: Confirmed that when using `mode="core"`, the SDK seamlessly translates the OpenAI-like request dictionaries into Pydantic models, fires them through the `ContextManager` sliding window, executes the local engine, and packages the result cleanly into a standard `ChatCompletionResponse`.
+  - **Async Behavior**: Thoroughly tested the new `AsyncClient` wrapper which works perfectly in both environments.
+
+#### 3. Final Report
+
+- **Commands executed**: `uv run pytest tests/integration/test_sdk.py -v`
+- **Tests executed**: 5 tests.
 - **Remaining issues**: None.
 </details>
