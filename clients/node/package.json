@@ -1,5 +1,5 @@
 {
-  "name": "lites",
+  "name": "lites-sdk",
   "version": "0.1.0",
   "description": "Official Node.js SDK for Lites - The lightning-fast AI proxy",
   "main": "dist/index.js",

@@ -52,14 +52,18 @@ function App() {
                 <button className="pill-btn" onClick={() => setActiveTab('docs')}>
                   How to use?
                 </button>
-                <div className="pill-code">
-                  <span className="pkg-mgr">NPM</span>
-                  <code>npm i lites-sdk</code>
-                </div>
-                <div className="pill-code">
-                  <span className="pkg-mgr">PyPI</span>
-                  <code>pip install lites</code>
-                </div>
+                <a href="https://www.npmjs.com/package/lites-sdk" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="pill-code">
+                    <span className="pkg-mgr">NPM</span>
+                    <code>npm i lites-sdk</code>
+                  </div>
+                </a>
+                <a href="https://pypi.org/project/lites-sdk/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="pill-code">
+                    <span className="pkg-mgr">PyPI</span>
+                    <code>pip install lites-sdk</code>
+                  </div>
+                </a>
               </div>
             </div>
 
