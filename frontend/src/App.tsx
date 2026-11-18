@@ -3,10 +3,12 @@ import { Dashboard } from './components/Dashboard';
 import { Documentation } from './components/Documentation';
 import { Sidebar } from './components/Sidebar';
 import { DetailedFlowchart } from './components/DetailedFlowchart';
+import { TutorialVideoCard } from './components/TutorialVideoCard';
+import { Tutorials } from './components/Tutorials';
 import './index.css';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'docs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'tutorials' | 'docs'>('dashboard');
   const [activeSection, setActiveSection] = useState('Quick Start');
 
   return (
@@ -21,6 +23,12 @@ function App() {
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
+          </button>
+          <button 
+            className={`nav-link ${activeTab === 'tutorials' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tutorials')}
+          >
+            Tutorials
           </button>
           <button 
             className={`nav-link ${activeTab === 'docs' ? 'active' : ''}`}
@@ -39,8 +47,8 @@ function App() {
         </div>
       </nav>
 
-      <main className={activeTab === 'dashboard' ? "main-content" : "docs-layout"}>
-        {activeTab === 'dashboard' ? (
+      <main className={activeTab === 'dashboard' ? "main-content" : activeTab === 'tutorials' ? "tutorials-layout" : "docs-layout"}>
+        {activeTab === 'dashboard' && (
           <>
             {/* Hero Section */}
             <div className="hero-section" style={{ gridColumn: '1 / -1' }}>
@@ -49,8 +57,15 @@ function App() {
                 The fastest way to optimize your LLM costs and latency with exact caching, semantic caching, and AI compression.
               </p>
               <div className="hero-actions">
-                <button className="pill-btn" onClick={() => setActiveTab('docs')}>
-                  How to use?
+                <button className="pill-btn" onClick={() => setActiveTab('tutorials')}>
+                  Watch Tutorial
+                </button>
+                <button 
+                  className="pill-btn" 
+                  style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }} 
+                  onClick={() => setActiveTab('docs')}
+                >
+                  Documentation
                 </button>
                 <a href="https://www.npmjs.com/package/lites-sdk" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="pill-code">
@@ -65,6 +80,14 @@ function App() {
                   </div>
                 </a>
               </div>
+            </div>
+
+            {/* Glassmorphic Tutorial Video Showcase in Dashboard */}
+            <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
+              <TutorialVideoCard 
+                title="Lites in Action: Interactive Architecture & Compression Demo"
+                subtitle="Watch how Lites intercepts incoming LLM completions, resolves semantic Redis cache hits in 12ms, and compresses token context by up to 48%."
+              />
             </div>
 
             {/* Left Column */}
@@ -83,7 +106,13 @@ function App() {
               </div>
             </div>
           </>
-        ) : (
+        )}
+
+        {activeTab === 'tutorials' && (
+          <Tutorials />
+        )}
+
+        {activeTab === 'docs' && (
           <>
             <Sidebar 
               activeSection={activeSection}
