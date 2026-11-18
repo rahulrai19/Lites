@@ -50,44 +50,36 @@ function App() {
       <main className={activeTab === 'dashboard' ? "main-content" : activeTab === 'tutorials' ? "tutorials-layout" : "docs-layout"}>
         {activeTab === 'dashboard' && (
           <>
-            {/* Hero Section */}
-            <div className="hero-section" style={{ gridColumn: '1 / -1' }}>
-              <h1 className="hero-title">Welcome to Lites</h1>
-              <p className="hero-subtitle">
-                The fastest way to optimize your LLM costs and latency with exact caching, semantic caching, and AI compression.
-              </p>
-              <div className="hero-actions">
-                <button className="pill-btn" onClick={() => setActiveTab('tutorials')}>
-                  Watch Tutorial
-                </button>
-                <button 
-                  className="pill-btn" 
-                  style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff' }} 
-                  onClick={() => setActiveTab('docs')}
-                >
-                  Documentation
-                </button>
-                <a href="https://www.npmjs.com/package/lites-sdk" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="pill-code">
-                    <span className="pkg-mgr">NPM</span>
-                    <code>npm i lites-sdk</code>
-                  </div>
-                </a>
-                <a href="https://pypi.org/project/lites-sdk/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="pill-code">
-                    <span className="pkg-mgr">PyPI</span>
-                    <code>pip install lites-sdk</code>
-                  </div>
-                </a>
+            {/* Hero Container: Left side Title/Subtitle/Pills, Right side Glassmorphic Video */}
+            <div className="hero-container">
+              <div className="hero-section">
+                <h1 className="hero-title">Welcome to Lites</h1>
+                <p className="hero-subtitle">
+                  The fastest way to optimize your LLM costs and latency with exact caching, semantic caching, and AI compression.
+                </p>
+                <div className="hero-actions">
+                  <button className="pill-btn" onClick={() => setActiveTab('docs')}>
+                    How to use?
+                  </button>
+                  <a href="https://www.npmjs.com/package/lites-sdk" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className="pill-code">
+                      <span className="pkg-mgr">NPM</span>
+                      <code>npm i lites-sdk</code>
+                    </div>
+                  </a>
+                  <a href="https://pypi.org/project/lites-sdk/" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className="pill-code">
+                      <span className="pkg-mgr">PYPI</span>
+                      <code>pip install lites-sdk</code>
+                    </div>
+                  </a>
+                </div>
               </div>
-            </div>
 
-            {/* Glassmorphic Tutorial Video Showcase in Dashboard */}
-            <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
-              <TutorialVideoCard 
-                title="Lites in Action: Interactive Architecture & Compression Demo"
-                subtitle="Watch how Lites intercepts incoming LLM completions, resolves semantic Redis cache hits in 12ms, and compresses token context by up to 48%."
-              />
+              {/* Glassmorphic Tutorial Video in the Yellow Box Region */}
+              <div className="hero-video-wrapper">
+                <TutorialVideoCard hideFooter={true} />
+              </div>
             </div>
 
             {/* Left Column */}

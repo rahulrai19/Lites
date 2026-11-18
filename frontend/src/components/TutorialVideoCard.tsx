@@ -5,6 +5,7 @@ interface TutorialVideoCardProps {
   title?: string;
   subtitle?: string;
   autoPlay?: boolean;
+  hideFooter?: boolean;
 }
 
 const CHAPTERS = [
@@ -54,7 +55,8 @@ const client = new LitesClient({
 export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
   title = "Interactive Walkthrough: How Lites Accelerates LLM Calls",
   subtitle = "Learn how proxy caching, vector similarity, and lossless prompt compression slash your AI bills.",
-  autoPlay = false
+  autoPlay = false,
+  hideFooter = false
 }) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [currentTime, setCurrentTime] = useState(14); // start partway for nice preview
@@ -129,7 +131,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
           className={`play-orb ${isPlaying ? 'is-playing' : ''}`}
           title={isPlaying ? "Click to Pause" : "Click to Play"}
         >
-          {isPlaying ? <Pause size={32} /> : <Play size={32} style={{ marginLeft: '4px' }} />}
+          {isPlaying ? <Pause size={30} /> : <Play size={30} style={{ marginLeft: '4px' }} />}
         </div>
 
         {/* Video Canvas Content Overlay */}
@@ -158,14 +160,14 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
           <div className="video-stage-preview">
             <div className="mock-code-box">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '0.35rem', marginBottom: '0.35rem' }}>
-                <span style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.8rem' }}>
+                <span style={{ color: '#ffffff', fontWeight: 600, fontSize: '0.78rem' }}>
                   {currentChapter.title}
                 </span>
-                <span className="mock-line-highlight" style={{ fontSize: '0.75rem' }}>
+                <span className="mock-line-highlight" style={{ fontSize: '0.72rem' }}>
                   {currentChapter.status}
                 </span>
               </div>
-              <pre style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+              <pre style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.35, fontSize: '0.78rem' }}>
                 {currentChapter.code}
               </pre>
             </div>
@@ -175,12 +177,12 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
             <div style={{ 
               background: 'rgba(0, 0, 0, 0.55)', 
               backdropFilter: 'blur(8px)',
-              padding: '0.4rem 0.8rem', 
+              padding: '0.35rem 0.75rem', 
               borderRadius: '8px',
               border: '1px solid rgba(255, 255, 255, 0.08)'
             }}>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Topic Chapter</div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#ffffff' }}>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Topic Chapter</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>
                 {currentChapter.title}
               </div>
             </div>
@@ -188,10 +190,10 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
             <div style={{ 
               background: 'rgba(0, 0, 0, 0.55)', 
               backdropFilter: 'blur(8px)',
-              padding: '0.4rem 0.8rem', 
+              padding: '0.35rem 0.75rem', 
               borderRadius: '8px',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              fontSize: '0.8rem',
+              fontSize: '0.75rem',
               color: '#ccff00',
               fontFamily: 'var(--font-mono)'
             }}>
@@ -224,7 +226,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
               onClick={togglePlay}
               aria-label={isPlaying ? "Pause" : "Play"}
             >
-              {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+              {isPlaying ? <Pause size={17} /> : <Play size={17} />}
             </button>
 
             <button 
@@ -233,7 +235,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
               title="Restart from beginning"
               aria-label="Restart video"
             >
-              <RotateCcw size={16} />
+              <RotateCcw size={15} />
             </button>
 
             <button 
@@ -241,7 +243,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
               onClick={() => setIsMuted(!isMuted)}
               aria-label={isMuted ? "Unmute" : "Mute"}
             >
-              {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              {isMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
             </button>
 
             <span className="video-time-display">
@@ -250,7 +252,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
           </div>
 
           <div className="video-btn-group">
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
               1080p 60fps HD
             </span>
             <button 
@@ -259,14 +261,14 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
               title="Toggle Full View"
               aria-label="Expand"
             >
-              <Maximize2 size={16} />
+              <Maximize2 size={15} />
             </button>
           </div>
         </div>
       </div>
 
       {/* Optional Card Header / Summary Footer */}
-      {(title || subtitle) && (
+      {!hideFooter && (title || subtitle) && (
         <div style={{ padding: '1.25rem 1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
             {title}
