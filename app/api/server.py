@@ -1,4 +1,5 @@
 import time
+import random
 from fastapi import FastAPI, Response, Depends
 from contextlib import asynccontextmanager
 
@@ -53,10 +54,14 @@ async def lifespan(app: FastAPI):
 
     mongo_client = None
     if env.MONGO_URI and AsyncIOMotorClient:
-        mongo_client = AsyncIOMotorClient(env.MONGO_URI)
-        print("Lites is running with MongoDB Metrics Persistence!")
-        
-    telemetry = TelemetryTracker(mongo_client=mongo_client)
+        try:
+            mongo_client = AsyncIOMotorClient(env.MONGO_URI, serverSelectionTimeoutMS=2000)
+            print("Lites configured with MongoDB Metrics Persistence!")
+        except Exception:
+            mongo_client = None
+
+    redis_client = getattr(exact_cache, 'client', None)
+    telemetry = TelemetryTracker(mongo_client=mongo_client, redis_client=redis_client)
     await telemetry.initialize()
     
     engine = LitesCoreEngine(
@@ -117,14 +122,8 @@ async def chat_completions(request: ChatCompletionRequest, response: Response):
     except ValueError:
         context = ContextProfile.DEFAULT
         
-    # Execute through the Lites Core Engine
-    # Note: Engine currently returns only the string response. 
-    # To return metadata headers, we'd ideally return the metadata from execute().
-    # For now, we will execute and inject a basic X-Lites-Status header.
     start_time = time.time()
-    
     response_text = await engine.execute(full_prompt, request.model, context)
-    
     elapsed_ms = int((time.time() - start_time) * 1000)
     
     # Inject Lites Headers
@@ -147,3 +146,39 @@ async def get_metrics():
     if telemetry:
         return telemetry.get_metrics()
     return TelemetryMetrics()
+
+@app.post("/v1/lites/metrics", response_model=TelemetryMetrics, dependencies=[Depends(verify_api_key)])
+async def update_metrics(payload: TelemetryMetrics):
+    if telemetry:
+        await telemetry.set_metrics(payload)
+        return telemetry.get_metrics()
+    return payload
+
+@app.post("/v1/lites/metrics/seed", response_model=TelemetryMetrics, dependencies=[Depends(verify_api_key)])
+async def seed_random_metrics():
+    reqs = random.randint(1450, 2600)
+    exact_hits = int(reqs * random.uniform(0.32, 0.42))
+    semantic_hits = int(reqs * random.uniform(0.18, 0.26))
+    rule_savings = random.randint(185000, 360000)
+    ai_savings = random.randint(290000, 530000)
+    overhead = int(reqs * random.uniform(1.4, 2.6))
+    
+    seeded = TelemetryMetrics(
+        total_requests=reqs,
+        exact_cache_hits=exact_hits,
+        exact_cache_misses=reqs - exact_hits,
+        semantic_cache_hits=semantic_hits,
+        semantic_cache_misses=reqs - exact_hits - semantic_hits,
+        total_tokens_processed=int((rule_savings + ai_savings) * random.uniform(3.2, 4.5)),
+        tokens_saved_by_rules=rule_savings,
+        tokens_saved_by_ai=ai_savings,
+        total_optimization_overhead_ms=overhead,
+        provider_latency_ms=int(reqs * random.uniform(140, 220)),
+        total_latency_ms=int(reqs * random.uniform(142, 223)),
+        total_estimated_cost_saved=round((rule_savings + ai_savings) * 0.00005, 2),
+        total_routing_redirects=int(reqs * random.uniform(0.20, 0.35))
+    )
+    if telemetry:
+        await telemetry.set_metrics(seeded)
+        return telemetry.get_metrics()
+    return seeded
