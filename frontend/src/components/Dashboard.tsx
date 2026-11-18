@@ -27,7 +27,8 @@ export function Dashboard() {
     const fetchMetrics = async () => {
       try {
         const apiKey = import.meta.env.VITE_LITES_API_KEY || 'test-lites-key';
-        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+        const apiUrl = import.meta.env.VITE_API_URL || (isLocal ? '' : 'https://lites-su1c.onrender.com');
         const response = await fetch(`${apiUrl}/v1/lites/metrics`, {
           headers: {
             'Authorization': `Bearer ${apiKey}`
