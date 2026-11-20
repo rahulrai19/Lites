@@ -200,7 +200,8 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
   hideFooter = false
 }) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
-  const [currentTime, setCurrentTime] = useState(4.0); // Preview scenario 1
+  const [hasStarted, setHasStarted] = useState(autoPlay);
+  const [currentTime, setCurrentTime] = useState(0.0); // Start cleanly at 0:00
   const [speed, setSpeed] = useState<number>(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -227,6 +228,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
         setCurrentTime((prev) => {
           if (prev >= duration) {
             setIsPlaying(false);
+            setHasStarted(false);
             return 0;
           }
           return Math.min(duration, +(prev + step).toFixed(2));
@@ -242,12 +244,17 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
 
   const forward5s = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setHasStarted(true);
     setCurrentTime((prev) => Math.min(duration, +(prev + 5).toFixed(1)));
   };
 
   const rewind5s = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentTime((prev) => Math.max(0, +(prev - 5).toFixed(1)));
+    setCurrentTime((prev) => {
+      const target = Math.max(0, +(prev - 5).toFixed(1));
+      if (target === 0) setHasStarted(false);
+      return target;
+    });
   };
 
   const cycleSpeed = (e: React.MouseEvent) => {
@@ -258,12 +265,16 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
   const resetVideo = (e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentTime(0);
-    setIsPlaying(true);
+    setHasStarted(false);
+    setIsPlaying(false);
   };
 
   const jumpToScenario = (e: React.MouseEvent, startTime: number) => {
     e.stopPropagation();
     setCurrentTime(startTime);
+    if (startTime > 0) {
+      setHasStarted(true);
+    }
   };
 
   const toggleFullscreen = (e: React.MouseEvent) => {
@@ -285,7 +296,13 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
     const rect = scrubberRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const fraction = Math.max(0, Math.min(1, clickX / rect.width));
-    setCurrentTime(+(fraction * duration).toFixed(1));
+    const targetTime = +(fraction * duration).toFixed(1);
+    setCurrentTime(targetTime);
+    if (targetTime > 0) {
+      setHasStarted(true);
+    } else {
+      setHasStarted(false);
+    }
   };
 
   const formatTime = (secs: number) => {
@@ -313,22 +330,45 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
       {/* Video Screen Area */}
       <div 
         className={`video-screen video-screen-enhanced ${isPlaying ? 'is-playing' : 'is-paused'}`}
-        onClick={togglePlay}
+        onClick={() => {
+          if (!hasStarted || currentTime === 0) {
+            setHasStarted(true);
+            setIsPlaying(true);
+          } else {
+            togglePlay();
+          }
+        }}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') togglePlay(); }}
+        onKeyDown={(e) => { 
+          if (e.key === ' ' || e.key === 'Enter') {
+            if (!hasStarted || currentTime === 0) {
+              setHasStarted(true);
+              setIsPlaying(true);
+            } else {
+              togglePlay();
+            }
+          }
+        }}
         aria-label={isPlaying ? "Pause video" : "Play video"}
       >
         <div className="video-grid-overlay" />
         <div className="video-ambient-glow" />
 
-        {/* Floating Play/Pause Orb - 100% invisible when playing, only visible when paused */}
-        <div 
-          className="play-orb"
-          title={isPlaying ? "Click to Pause" : "Click to Play"}
-        >
-          {isPlaying ? <Pause size={28} /> : <Play size={28} style={{ marginLeft: '4px' }} />}
-        </div>
+        {/* Central Play Orb - ONLY shown at the beginning of video at 0:00, NEVER in between or during playback */}
+        {(!hasStarted || currentTime === 0) && !isPlaying && (
+          <div 
+            className="play-orb"
+            title="Start Walkthrough"
+            onClick={(e) => {
+              e.stopPropagation();
+              setHasStarted(true);
+              setIsPlaying(true);
+            }}
+          >
+            <Play size={32} style={{ marginLeft: '4px' }} />
+          </div>
+        )}
 
         {/* Video Canvas Content Overlay */}
         <div className="video-canvas-content">
@@ -344,7 +384,7 @@ export const TutorialVideoCard: React.FC<TutorialVideoCardProps> = ({
                 boxShadow: isPlaying ? '0 0 8px #ef4444' : 'none',
                 animation: isPlaying ? 'pulse 1.5s infinite' : 'none'
               }} />
-              {isPlaying ? `DEMO RUNNING (${speed}x)` : 'PAUSED • CLICK ANYWHERE TO PLAY'}
+              {isPlaying ? `DEMO RUNNING (${speed}x)` : (!hasStarted || currentTime === 0) ? 'CLICK TO START DEMO' : 'PAUSED • CLICK TO RESUME'}
             </span>
 
             <span className="video-badge" style={{ borderColor: currentScenario.badgeColor, color: currentScenario.badgeColor, background: 'rgba(0,0,0,0.5)' }}>
