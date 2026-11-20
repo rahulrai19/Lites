@@ -554,8 +554,10 @@ body {
 .code-variable { color: var(--text-primary); }
 
 .copy-btn {
-  width: 100%;
-  margin-top: 1rem;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .prose {
@@ -1280,4 +1282,287 @@ body {
 .pipeline-arrow {
   color: #475569;
   font-size: 0.6rem;
+}
+
+/* ==========================================================================
+   Modern Interactive Integration UI Component
+   ========================================================================== */
+
+.integration-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-top: 1rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.integration-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.integration-title-group h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-primary);
+}
+
+.integration-title-group p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0.35rem 0 0 0;
+  line-height: 1.45;
+}
+
+.integration-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.3rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.integration-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.integration-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.integration-tab-btn.active {
+  background: var(--accent-red);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.45);
+}
+
+/* Code Editor Window */
+.ide-code-window {
+  background: #060a11;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.ide-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: rgba(17, 27, 39, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 1rem;
+}
+
+.ide-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.ide-mac-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ide-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.ide-dot.red { background-color: #ff5f56; }
+.ide-dot.yellow { background-color: #ffbd2e; }
+.ide-dot.green { background-color: #27c93f; }
+
+.ide-tab-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ide-install-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ide-install-pill:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.ide-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ide-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.ide-copy-btn.copied {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #a7f3d0;
+}
+
+/* Code Content Area */
+.ide-code-content {
+  padding: 1.1rem 0;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.ide-code-row {
+  display: flex;
+  align-items: center;
+  padding: 0.1rem 1rem 0.1rem 0;
+  transition: background 0.15s ease;
+}
+
+.ide-code-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ide-code-row.is-highlighted {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-left: 3px solid #ef4444;
+}
+
+.ide-line-num {
+  width: 48px;
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 1.25rem;
+  color: #475569;
+  user-select: none;
+  font-size: 0.78rem;
+}
+
+.ide-line-code {
+  flex-grow: 1;
+  white-space: pre;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.line-highlight-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ff8080;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  margin-left: 1rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Feature Perks Grid */
+.integration-perks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.integration-perk-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.integration-perk-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.perk-icon-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.perk-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.perk-desc {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
 }
