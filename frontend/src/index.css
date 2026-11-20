@@ -1091,3 +1091,108 @@ body {
     gap: 2rem;
   }
 }
+
+/* Enhanced 30s Split-View Animation Styles */
+.video-screen.video-screen-enhanced {
+  min-height: 330px;
+}
+
+.video-split-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .video-split-container {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.sim-chat-window {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.sim-engine-window {
+  background: rgba(10, 17, 26, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.sim-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.chat-bubble-user {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px 8px 2px 8px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.75rem;
+  color: #e2e8f0;
+  margin-left: auto;
+  max-width: 92%;
+  line-height: 1.35;
+}
+
+.chat-bubble-bot {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px 8px 8px 2px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.75rem;
+  color: #a7f3d0;
+  margin-right: auto;
+  max-width: 92%;
+  line-height: 1.35;
+}
+
+.engine-metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.speed-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.speed-badge:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #ff8080;
+}

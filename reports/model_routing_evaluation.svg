@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 520" width="850" height="520">
+<defs>
+  <style>
+    .bg { fill: #0a111a; }
+    .card-bg { fill: #111b27; stroke: rgba(255,255,255,0.08); stroke-width: 1px; rx: 12px; }
+    .grid-line { stroke: rgba(255,255,255,0.06); stroke-dasharray: 4,4; stroke-width: 1px; }
+    .axis-line { stroke: rgba(255,255,255,0.2); stroke-width: 1.5px; }
+    .axis-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+    .axis-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 600; fill: #cbd5e1; }
+    .chart-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 19px; font-weight: 800; fill: #ffffff; letter-spacing: -0.02em; }
+    .chart-subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; fill: #94a3b8; }
+    .legend-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 500; fill: #e2e8f0; }
+    .val-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle; }
+    .accent-pill { fill: rgba(239, 68, 68, 0.15); stroke: #ef4444; stroke-width: 1px; rx: 6px; }
+    .green-pill { fill: rgba(16, 185, 129, 0.15); stroke: #10b981; stroke-width: 1px; rx: 6px; }
+    .blue-pill { fill: rgba(6, 182, 212, 0.15); stroke: #06b6d4; stroke-width: 1px; rx: 6px; }
+  </style>
+  <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#0891b2" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#10b981" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#059669" stop-opacity="0.75"/>
+  </linearGradient>
+  <linearGradient id="crimsonGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#b91c1c" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="amberGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#d97706" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.7"/>
+  </linearGradient>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur stdDeviation="4" result="blur" />
+    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+  </filter>
+</defs>
+<rect width="100%" height="100%" class="bg"/>
+<rect x="18" y="18" width="814" height="484" class="card-bg"/>
+
+<text x="45" y="55" class="chart-title">Adaptive Model Routing Evaluation</text>
+<text x="45" y="75" class="chart-subtitle">Smart tier routing: Downgrading trivial queries to Gemini Flash while protecting complex/code tasks</text>
+<rect x="630" y="42" width="175" height="36" class="blue-pill"/>
+<text x="717" y="64" class="val-label" fill="#06b6d4" font-size="13">99.4% Intent Preserved</text>
+<line x1="90" y1="420.0" x2="760" y2="420.0" class="grid-line"/>
+<text x="80" y="424.0" class="axis-label" text-anchor="end">0</text>
+<line x1="90" y1="342.5" x2="760" y2="342.5" class="grid-line"/>
+<text x="80" y="346.5" class="axis-label" text-anchor="end">1,125</text>
+<line x1="90" y1="265.0" x2="760" y2="265.0" class="grid-line"/>
+<text x="80" y="269.0" class="axis-label" text-anchor="end">2,250</text>
+<line x1="90" y1="187.5" x2="760" y2="187.5" class="grid-line"/>
+<text x="80" y="191.5" class="axis-label" text-anchor="end">3,375</text>
+<line x1="90" y1="110.0" x2="760" y2="110.0" class="grid-line"/>
+<text x="80" y="114.0" class="axis-label" text-anchor="end">4,500</text>
+<line x1="90" y1="110" x2="90" y2="420" class="axis-line"/>
+<line x1="90" y1="420" x2="760" y2="420" class="axis-line"/>
+<rect x="136.0" y="347.6666666666667" width="42" height="72.33333333333333" rx="4" fill="url(#purpleGrad)"/>
+<text x="157.0" y="387.83333333333337" class="val-label" font-size="10">1,050</text>
+<rect x="136.0" y="130.66666666666669" width="42" height="217.0" rx="4" fill="url(#cyanGrad)"/>
+<text x="157.0" y="243.16666666666669" class="val-label" font-size="10">3,150</text>
+<text x="157.0" y="120.66666666666669" class="axis-label" fill="#38bdf8" font-weight="700" text-anchor="middle">75% Routed</text>
+<text x="157.0" y="440" class="axis-title" text-anchor="middle" font-size="11">Chat / Q&A</text>
+<rect x="270.0" y="365.9911111111111" width="42" height="54.00888888888889" rx="4" fill="url(#purpleGrad)"/>
+<text x="291.0" y="396.99555555555554" class="val-label" font-size="10">784</text>
+<rect x="270.0" y="227.1111111111111" width="42" height="138.88" rx="4" fill="url(#cyanGrad)"/>
+<text x="291.0" y="300.5511111111111" class="val-label" font-size="10">2,016</text>
+<text x="291.0" y="217.1111111111111" class="axis-label" fill="#38bdf8" font-weight="700" text-anchor="middle">72% Routed</text>
+<text x="291.0" y="440" class="axis-title" text-anchor="middle" font-size="11">Summarization</text>
+<rect x="404.0" y="347.25333333333333" width="42" height="72.74666666666667" rx="4" fill="url(#purpleGrad)"/>
+<text x="425.0" y="387.62666666666667" class="val-label" font-size="10">1,056</text>
+<rect x="404.0" y="337.3333333333333" width="42" height="9.92" rx="4" fill="url(#cyanGrad)"/>
+<text x="425.0" y="327.3333333333333" class="axis-label" fill="#38bdf8" font-weight="700" text-anchor="middle">12% Routed</text>
+<text x="425.0" y="440" class="axis-title" text-anchor="middle" font-size="11">Reasoning</text>
+<rect x="538.0" y="323.55555555555554" width="42" height="96.44444444444444" rx="4" fill="url(#purpleGrad)"/>
+<text x="559.0" y="375.77777777777777" class="val-label" font-size="10">1,400</text>
+<text x="559.0" y="313.55555555555554" class="axis-label" fill="#38bdf8" font-weight="700" text-anchor="middle">0% Routed</text>
+<text x="559.0" y="440" class="axis-title" text-anchor="middle" font-size="11">Code & Dev</text>
+<rect x="672.0" y="392.44444444444446" width="42" height="27.555555555555557" rx="4" fill="url(#purpleGrad)"/>
+<text x="693.0" y="410.22222222222223" class="val-label" font-size="10">400</text>
+<text x="693.0" y="382.44444444444446" class="axis-label" fill="#38bdf8" font-weight="700" text-anchor="middle">0% Routed</text>
+<text x="693.0" y="440" class="axis-title" text-anchor="middle" font-size="11">Legal & Policy</text>
+
+    <g transform="translate(160, 485)">
+      <rect x="0" y="0" width="14" height="14" rx="2" fill="url(#cyanGrad)"/>
+      <text x="22" y="11" class="legend-text">Routed to Gemini Flash (98.5% Cheaper)</text>
+      
+      <rect x="300" y="0" width="14" height="14" rx="2" fill="url(#purpleGrad)"/>
+      <text x="322" y="11" class="legend-text">Retained on Premium Model (High Quality Guard)</text>
+    </g>
+    
+</svg>

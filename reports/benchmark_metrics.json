@@ -1,0 +1,167 @@
+{
+  "token_reduction": {
+    "categories": [
+      "Short Chat Queries (<200 tokens)",
+      "Verbose System Instructions",
+      "Code & Technical Context",
+      "Multi-turn History (4k window)",
+      "Enterprise RAG Documents"
+    ],
+    "baseline": [
+      165,
+      840,
+      1420,
+      3100,
+      4850
+    ],
+    "lites_optimized": [
+      128,
+      485,
+      1140,
+      1580,
+      2760
+    ],
+    "savings_pct": [
+      22.4,
+      42.3,
+      19.7,
+      49.0,
+      43.1
+    ]
+  },
+  "cost_reduction": {
+    "workload_tiers": [
+      "10k Reqs",
+      "25k Reqs",
+      "50k Reqs",
+      "75k Reqs",
+      "100k Reqs"
+    ],
+    "baseline_cost": [
+      148.0,
+      370.0,
+      740.0,
+      1110.0,
+      1480.0
+    ],
+    "lites_cost": [
+      32.84,
+      82.1,
+      164.18,
+      246.27,
+      328.36
+    ],
+    "cumulative_savings": [
+      115.16,
+      287.9,
+      575.82,
+      863.73,
+      1151.64
+    ],
+    "savings_pct": 77.8
+  },
+  "latency_analysis": {
+    "tiers": [
+      "Exact Cache Hit (Redis)",
+      "Semantic Cache (Vector)",
+      "Flash Routed (Gemini)",
+      "Optimized Upstream (GPT-4o)",
+      "Baseline Cold (GPT-4o)"
+    ],
+    "p50": [
+      11.8,
+      31.0,
+      340.0,
+      1020.0,
+      2150.0
+    ],
+    "p90": [
+      14.2,
+      42.5,
+      480.0,
+      1480.0,
+      2890.0
+    ],
+    "p99": [
+      18.5,
+      58.0,
+      610.0,
+      1890.0,
+      3750.0
+    ]
+  },
+  "cache_performance": {
+    "thresholds": [
+      0.8,
+      0.85,
+      0.88,
+      0.9,
+      0.92,
+      0.94,
+      0.96,
+      0.98
+    ],
+    "hit_rate": [
+      68.2,
+      63.5,
+      59.8,
+      57.4,
+      55.8,
+      52.1,
+      46.5,
+      38.2
+    ],
+    "precision": [
+      91.4,
+      96.8,
+      98.4,
+      99.2,
+      100.0,
+      100.0,
+      100.0,
+      100.0
+    ],
+    "breakdown": {
+      "Exact Match": 34.0,
+      "Semantic Match": 21.8,
+      "Cache Miss": 44.2
+    }
+  },
+  "model_routing": {
+    "profiles": [
+      "Chat / Q&A",
+      "Summarization",
+      "Reasoning",
+      "Code & Dev",
+      "Legal & Policy"
+    ],
+    "total_requests": [
+      4200,
+      2800,
+      1200,
+      1400,
+      400
+    ],
+    "routed_to_flash": [
+      3150,
+      2016,
+      144,
+      0,
+      0
+    ],
+    "retained_on_gpt4o": [
+      1050,
+      784,
+      1056,
+      1400,
+      400
+    ],
+    "routing_rate_pct": [
+      75.0,
+      72.0,
+      12.0,
+      0.0,
+      0.0
+    ]
+  }
+}

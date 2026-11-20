@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+<defs>
+  <style>
+    .bg { fill: #070c14; }
+    .panel { fill: #0f172a; stroke: rgba(255,255,255,0.08); stroke-width: 1px; rx: 12px; }
+    .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 26px; font-weight: 800; fill: #ffffff; letter-spacing: -0.03em; }
+    .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+    .panel-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; font-weight: 700; fill: #ffffff; }
+    .panel-meta { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+    .kpi-num { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 28px; font-weight: 800; fill: #ffffff; }
+    .kpi-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; fill: #94a3b8; }
+    .text-green { fill: #10b981; }
+    .text-cyan { fill: #06b6d4; }
+    .text-red { fill: #ef4444; }
+    .text-amber { fill: #f59e0b; }
+  </style>
+</defs>
+<rect width="100%" height="100%" class="bg"/>
+
+<!-- Header -->
+<g transform="translate(35, 45)">
+  <text x="0" y="0" class="title">Lites LLM Optimization &amp; Proxy Performance Report</text>
+  <text x="0" y="22" class="subtitle">Empirical evaluation of Token Compression, Cost Reduction, Latency Overhead, Cache Dynamics, and Adaptive Routing</text>
+</g>
+
+<!-- Top 4 KPI Metric Cards -->
+<g transform="translate(35, 95)">
+  <!-- KPI 1 -->
+  <rect x="0" y="0" width="265" height="85" class="panel"/>
+  <text x="20" y="32" class="kpi-lbl">Tokens Saved</text>
+  <text x="20" y="65" class="kpi-num text-green">41.6%</text>
+  <text x="135" y="65" class="panel-meta">Avg. Across Workloads</text>
+
+  <!-- KPI 2 -->
+  <rect x="288" y="0" width="265" height="85" class="panel"/>
+  <text x="308" y="32" class="kpi-lbl">Net Cost Reduction</text>
+  <text x="308" y="65" class="kpi-num text-green">77.8%</text>
+  <text x="425" y="65" class="panel-meta">Saved $1,151 / 100k</text>
+
+  <!-- KPI 3 -->
+  <rect x="576" y="0" width="265" height="85" class="panel"/>
+  <text x="596" y="32" class="kpi-lbl">Cache Hit Latency</text>
+  <text x="596" y="65" class="kpi-num text-cyan">12.4ms</text>
+  <text x="715" y="65" class="panel-meta">180x Faster than Cold</text>
+
+  <!-- KPI 4 -->
+  <rect x="864" y="0" width="265" height="85" class="panel"/>
+  <text x="884" y="32" class="kpi-lbl">Cache Hit Rate</text>
+  <text x="884" y="65" class="kpi-num text-amber">55.8%</text>
+  <text x="990" y="65" class="panel-meta">34% Exact / 21.8% Semantic</text>
+</g>
+
+<!-- Middle Row: 2 Big Panels -->
+<g transform="translate(35, 205)">
+  <!-- Panel Left: Token Reduction Analysis -->
+  <rect x="0" y="0" width="555" height="275" class="panel"/>
+  <text x="20" y="30" class="panel-title">1. Token Reduction by Context Type</text>
+  <text x="20" y="48" class="panel-meta">Tokens before vs after deterministic rules and AI prompt compression</text>
+
+  <!-- Bars inside Panel Left -->
+  <g transform="translate(20, 75)">
+    <!-- Row 1: Short Chat -->
+    <text x="0" y="14" class="panel-meta" font-size="11">Short Chat</text>
+    <rect x="130" y="4" width="180" height="12" rx="2" fill="#ef4444" opacity="0.8"/>
+    <rect x="130" y="4" width="140" height="12" rx="2" fill="#10b981"/>
+    <text x="325" y="14" class="panel-meta" fill="#10b981" font-weight="700">-22.4%</text>
+
+    <!-- Row 2: Verbose System -->
+    <text x="0" y="44" class="panel-meta" font-size="11">System Prompts</text>
+    <rect x="130" y="34" width="260" height="12" rx="2" fill="#ef4444" opacity="0.8"/>
+    <rect x="130" y="34" width="150" height="12" rx="2" fill="#10b981"/>
+    <text x="405" y="44" class="panel-meta" fill="#10b981" font-weight="700">-42.3%</text>
+
+    <!-- Row 3: Code Context -->
+    <text x="0" y="74" class="panel-meta" font-size="11">Code &amp; Syntax</text>
+    <rect x="130" y="64" width="310" height="12" rx="2" fill="#ef4444" opacity="0.8"/>
+    <rect x="130" y="64" width="249" height="12" rx="2" fill="#10b981"/>
+    <text x="455" y="74" class="panel-meta" fill="#10b981" font-weight="700">-19.7%</text>
+
+    <!-- Row 4: Multi-turn History -->
+    <text x="0" y="104" class="panel-meta" font-size="11">Multi-Turn (4k)</text>
+    <rect x="130" y="94" width="350" height="12" rx="2" fill="#ef4444" opacity="0.8"/>
+    <rect x="130" y="94" width="178" height="12" rx="2" fill="#10b981"/>
+    <text x="495" y="104" class="panel-meta" fill="#10b981" font-weight="700">-49.0%</text>
+
+    <!-- Row 5: Enterprise RAG -->
+    <text x="0" y="134" class="panel-meta" font-size="11">Enterprise RAG</text>
+    <rect x="130" y="124" width="380" height="12" rx="2" fill="#ef4444" opacity="0.8"/>
+    <rect x="130" y="124" width="216" height="12" rx="2" fill="#10b981"/>
+    <text x="525" y="134" class="panel-meta" fill="#10b981" font-weight="700">-43.1%</text>
+  </g>
+
+  <!-- Panel Right: Cost Reduction Analysis -->
+  <rect x="575" y="0" width="555" height="275" class="panel"/>
+  <text x="595" y="30" class="panel-title">2. Cost Reduction Progression ($ / 100k Reqs)</text>
+  <text x="595" y="48" class="panel-meta">Uncompressed upstream cost ($1,480) vs. Lites cached &amp; routed pipeline ($328)</text>
+
+  <!-- Sparkline & Bars inside Panel Right -->
+  <g transform="translate(615, 80)">
+    <!-- Bar comparison -->
+    <text x="0" y="24" class="panel-meta" font-size="12">100k Requests Spend:</text>
+    
+    <text x="0" y="58" class="panel-meta">Raw Baseline:</text>
+    <rect x="110" y="46" width="380" height="16" rx="4" fill="#ef4444" opacity="0.85"/>
+    <text x="500" y="59" class="panel-meta" fill="#fca5a5" font-weight="700">$1,480.00</text>
+
+    <text x="0" y="92" class="panel-meta">With Lites:</text>
+    <rect x="110" y="80" width="84" height="16" rx="4" fill="#10b981"/>
+    <text x="205" y="93" class="panel-meta" fill="#34d399" font-weight="700">$328.36 (Saved $1,151.64)</text>
+
+    <!-- Breakdown items -->
+    <g transform="translate(0, 125)">
+      <rect x="0" y="0" width="150" height="42" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="12" y="18" class="panel-meta" font-size="10">Exact Cache Savings</text>
+      <text x="12" y="35" class="panel-title" font-size="14" fill="#10b981">$503.20</text>
+
+      <rect x="165" y="0" width="150" height="42" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="177" y="18" class="panel-meta" font-size="10">Semantic Cache</text>
+      <text x="177" y="35" class="panel-title" font-size="14" fill="#06b6d4">$322.64</text>
+
+      <rect x="330" y="0" width="150" height="42" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+      <text x="342" y="18" class="panel-meta" font-size="10">Adaptive Routing</text>
+      <text x="342" y="35" class="panel-title" font-size="14" fill="#8b5cf6">$141.60</text>
+    </g>
+  </g>
+</g>
+
+<!-- Bottom Row: 3 Panels (Latency, Cache, Model Routing) -->
+<g transform="translate(35, 500)">
+  <!-- Panel 3: Latency Analysis -->
+  <rect x="0" y="0" width="360" height="260" class="panel"/>
+  <text x="20" y="30" class="panel-title">3. Latency Distribution (ms)</text>
+  <text x="20" y="48" class="panel-meta">P50 response times across paths</text>
+
+  <g transform="translate(20, 75)">
+    <text x="0" y="16" class="panel-meta" font-size="11">Exact Cache</text>
+    <rect x="110" y="6" width="12" height="12" rx="2" fill="#06b6d4"/>
+    <text x="132" y="16" class="panel-meta" fill="#06b6d4" font-weight="700">11.8 ms</text>
+
+    <text x="0" y="46" class="panel-meta" font-size="11">Semantic Match</text>
+    <rect x="110" y="36" width="28" height="12" rx="2" fill="#06b6d4"/>
+    <text x="148" y="46" class="panel-meta" fill="#06b6d4" font-weight="700">31.0 ms</text>
+
+    <text x="0" y="76" class="panel-meta" font-size="11">Flash Routed</text>
+    <rect x="110" y="66" width="90" height="12" rx="2" fill="#10b981"/>
+    <text x="210" y="76" class="panel-meta" fill="#10b981" font-weight="700">340 ms</text>
+
+    <text x="0" y="106" class="panel-meta" font-size="11">Upstream (Opt)</text>
+    <rect x="110" y="96" width="150" height="12" rx="2" fill="#f59e0b"/>
+    <text x="270" y="106" class="panel-meta" fill="#f59e0b" font-weight="700">1,020 ms</text>
+
+    <text x="0" y="136" class="panel-meta" font-size="11">Raw Baseline</text>
+    <rect x="110" y="126" width="200" height="12" rx="2" fill="#ef4444"/>
+    <text x="318" y="136" class="panel-meta" fill="#ef4444" font-weight="700">2,150 ms</text>
+  </g>
+
+  <!-- Panel 4: Cache Performance -->
+  <rect x="385" y="0" width="360" height="260" class="panel"/>
+  <text x="405" y="30" class="panel-title">4. Cache Performance Dynamics</text>
+  <text x="405" y="48" class="panel-meta">55.8% Total Hit Rate (0% False Positives)</text>
+
+  <g transform="translate(405, 80)">
+    <!-- Horizontal stacked hit bar -->
+    <rect x="0" y="0" width="108" height="22" rx="3" fill="#10b981"/>
+    <rect x="110" y="0" width="70" height="22" rx="3" fill="#06b6d4"/>
+    <rect x="182" y="0" width="140" height="22" rx="3" fill="#334155"/>
+
+    <text x="4" y="38" class="panel-meta" font-size="10">Exact (34.0%)</text>
+    <text x="112" y="38" class="panel-meta" font-size="10">Semantic (21.8%)</text>
+    <text x="210" y="38" class="panel-meta" font-size="10">Miss (44.2%)</text>
+
+    <g transform="translate(0, 65)">
+      <text x="0" y="15" class="panel-meta" font-size="11">Sensitivity Threshold Check:</text>
+      <text x="0" y="35" class="panel-meta" font-size="11">• θ ≥ 0.92 guarantees <tspan fill="#10b981" font-weight="700">100% Intent Precision</tspan></text>
+      <text x="0" y="55" class="panel-meta" font-size="11">• In-Memory LRU + Redis cluster sync</text>
+      <text x="0" y="75" class="panel-meta" font-size="11">• Middleware overhead: <tspan fill="#06b6d4" font-weight="700">&lt; 1.35ms</tspan></text>
+    </g>
+  </g>
+
+  <!-- Panel 5: Model Routing Evaluation -->
+  <rect x="770" y="0" width="395" height="260" class="panel"/>
+  <text x="790" y="30" class="panel-title">5. Adaptive Model Routing Matrix</text>
+  <text x="790" y="48" class="panel-meta">Complexity &amp; safety context-aware dispatch</text>
+
+  <g transform="translate(790, 80)">
+    <!-- Table rows -->
+    <text x="0" y="15" class="panel-meta" font-size="11" font-weight="700">Context Profile</text>
+    <text x="140" y="15" class="panel-meta" font-size="11" font-weight="700">Routed to Flash</text>
+    <text x="260" y="15" class="panel-meta" font-size="11" font-weight="700">Status</text>
+
+    <line x1="0" y1="24" x2="360" y2="24" stroke="rgba(255,255,255,0.08)"/>
+
+    <text x="0" y="42" class="panel-meta">Chat / General</text>
+    <text x="140" y="42" class="panel-meta" fill="#06b6d4" font-weight="700">75.0%</text>
+    <text x="260" y="42" class="panel-meta" fill="#10b981">Optimized</text>
+
+    <text x="0" y="66" class="panel-meta">Summarization</text>
+    <text x="140" y="66" class="panel-meta" fill="#06b6d4" font-weight="700">72.0%</text>
+    <text x="260" y="66" class="panel-meta" fill="#10b981">Optimized</text>
+
+    <text x="0" y="90" class="panel-meta">Complex Reasoning</text>
+    <text x="140" y="90" class="panel-meta" fill="#f59e0b" font-weight="700">12.0%</text>
+    <text x="260" y="90" class="panel-meta" fill="#f59e0b">Guarded</text>
+
+    <text x="0" y="114" class="panel-meta">Code &amp; Syntax</text>
+    <text x="140" y="114" class="panel-meta" fill="#ef4444" font-weight="700">0.0%</text>
+    <text x="260" y="114" class="panel-meta" fill="#ef4444">100% Protected</text>
+
+    <text x="0" y="138" class="panel-meta">Legal &amp; Compliance</text>
+    <text x="140" y="138" class="panel-meta" fill="#ef4444" font-weight="700">0.0%</text>
+    <text x="260" y="138" class="panel-meta" fill="#ef4444">100% Protected</text>
+  </g>
+</g>
+</svg>

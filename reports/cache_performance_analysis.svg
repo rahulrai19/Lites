@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 520" width="850" height="520">
+<defs>
+  <style>
+    .bg { fill: #0a111a; }
+    .card-bg { fill: #111b27; stroke: rgba(255,255,255,0.08); stroke-width: 1px; rx: 12px; }
+    .grid-line { stroke: rgba(255,255,255,0.06); stroke-dasharray: 4,4; stroke-width: 1px; }
+    .axis-line { stroke: rgba(255,255,255,0.2); stroke-width: 1.5px; }
+    .axis-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+    .axis-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 600; fill: #cbd5e1; }
+    .chart-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 19px; font-weight: 800; fill: #ffffff; letter-spacing: -0.02em; }
+    .chart-subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; fill: #94a3b8; }
+    .legend-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 500; fill: #e2e8f0; }
+    .val-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle; }
+    .accent-pill { fill: rgba(239, 68, 68, 0.15); stroke: #ef4444; stroke-width: 1px; rx: 6px; }
+    .green-pill { fill: rgba(16, 185, 129, 0.15); stroke: #10b981; stroke-width: 1px; rx: 6px; }
+    .blue-pill { fill: rgba(6, 182, 212, 0.15); stroke: #06b6d4; stroke-width: 1px; rx: 6px; }
+  </style>
+  <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#0891b2" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#10b981" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#059669" stop-opacity="0.75"/>
+  </linearGradient>
+  <linearGradient id="crimsonGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#b91c1c" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="amberGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#d97706" stop-opacity="0.7"/>
+  </linearGradient>
+  <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.7"/>
+  </linearGradient>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur stdDeviation="4" result="blur" />
+    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+  </filter>
+</defs>
+<rect width="100%" height="100%" class="bg"/>
+<rect x="18" y="18" width="814" height="484" class="card-bg"/>
+
+<text x="45" y="55" class="chart-title">Cache Performance &amp; Precision Curve</text>
+<text x="45" y="75" class="chart-subtitle">Semantic vector similarity threshold (θ) sensitivity vs. Hit Rate &amp; Intent Precision</text>
+<rect x="625" y="42" width="180" height="36" class="green-pill"/>
+<text x="715" y="64" class="val-label" fill="#10b981" font-size="13">Optimal Threshold: 0.92</text>
+<line x1="90" y1="420.0" x2="530" y2="420.0" class="grid-line"/>
+<text x="80" y="424.0" class="axis-label" text-anchor="end">0%</text>
+<line x1="90" y1="342.5" x2="530" y2="342.5" class="grid-line"/>
+<text x="80" y="346.5" class="axis-label" text-anchor="end">25%</text>
+<line x1="90" y1="265.0" x2="530" y2="265.0" class="grid-line"/>
+<text x="80" y="269.0" class="axis-label" text-anchor="end">50%</text>
+<line x1="90" y1="187.5" x2="530" y2="187.5" class="grid-line"/>
+<text x="80" y="191.5" class="axis-label" text-anchor="end">75%</text>
+<line x1="90" y1="110.0" x2="530" y2="110.0" class="grid-line"/>
+<text x="80" y="114.0" class="axis-label" text-anchor="end">100%</text>
+<line x1="90" y1="110" x2="90" y2="420" class="axis-line"/>
+<line x1="90" y1="420" x2="530" y2="420" class="axis-line"/>
+<text x="90.0" y="440" class="axis-label" text-anchor="middle">0.80</text>
+<text x="152.85714285714286" y="440" class="axis-label" text-anchor="middle">0.85</text>
+<text x="215.71428571428572" y="440" class="axis-label" text-anchor="middle">0.88</text>
+<text x="278.57142857142856" y="440" class="axis-label" text-anchor="middle">0.90</text>
+<text x="341.42857142857144" y="440" class="axis-label" text-anchor="middle">0.92</text>
+<text x="404.2857142857143" y="440" class="axis-label" text-anchor="middle">0.94</text>
+<text x="467.1428571428571" y="440" class="axis-label" text-anchor="middle">0.96</text>
+<text x="530.0" y="440" class="axis-label" text-anchor="middle">0.98</text>
+<text x="310.0" y="458" class="axis-title" text-anchor="middle">Cosine Similarity Threshold (θ)</text>
+<line x1="341.42857142857144" y1="110" x2="341.42857142857144" y2="420" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4"/>
+<text x="341.42857142857144" y="104" class="axis-label" fill="#f59e0b" font-weight="700" text-anchor="middle">θ = 0.92 (Zero FP)</text>
+<path d="M 90.0,208.57999999999998 L 152.85714285714286,223.15 L 215.71428571428572,234.62 L 278.57142857142856,242.06 L 341.42857142857144,247.02 L 404.2857142857143,258.49 L 467.1428571428571,275.85 L 530.0,301.58" fill="none" stroke="#06b6d4" stroke-width="3.5"/>
+<path d="M 90.0,136.65999999999997 L 152.85714285714286,119.92000000000002 L 215.71428571428572,114.95999999999998 L 278.57142857142856,112.48000000000002 L 341.42857142857144,110.0 L 404.2857142857143,110.0 L 467.1428571428571,110.0 L 530.0,110.0" fill="none" stroke="#10b981" stroke-width="3.5"/>
+<circle cx="90.0" cy="208.57999999999998" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="90.0" cy="136.65999999999997" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="152.85714285714286" cy="223.15" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="152.85714285714286" cy="119.92000000000002" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="215.71428571428572" cy="234.62" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="215.71428571428572" cy="114.95999999999998" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="278.57142857142856" cy="242.06" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="278.57142857142856" cy="112.48000000000002" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="341.42857142857144" cy="247.02" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="341.42857142857144" cy="110.0" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="404.2857142857143" cy="258.49" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="404.2857142857143" cy="110.0" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="467.1428571428571" cy="275.85" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="467.1428571428571" cy="110.0" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="530.0" cy="301.58" r="4" fill="#06b6d4" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="530.0" cy="110.0" r="4" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+<path d="M 680.0 155.0 A 85 85 0 0 1 751.7678736676712 285.5452775732147 L 726.4380359026109 269.4704737238448 A 55 55 0 0 0 680.0 185.0 Z" fill="#10b981" stroke="#111b27" stroke-width="2"/>
+<path d="M 751.7678736676712 285.5452775732147 A 85 85 0 0 1 649.7049903093737 319.41796010881205 L 660.3973466707712 291.38809183511364 A 55 55 0 0 0 726.4380359026109 269.4704737238448 Z" fill="#06b6d4" stroke="#111b27" stroke-width="2"/>
+<path d="M 649.7049903093737 319.41796010881205 A 85 85 0 0 1 680.0 155.0 L 680.0 185.0 A 55 55 0 0 0 660.3973466707712 291.38809183511364 Z" fill="#475569" stroke="#111b27" stroke-width="2"/>
+<text x="680" y="236" class="chart-title" font-size="22" text-anchor="middle">55.8%</text>
+<text x="680" y="256" class="axis-label" text-anchor="middle">Total Hit Rate</text>
+
+    <g transform="translate(580, 360)">
+      <circle cx="8" cy="8" r="5" fill="#10b981"/>
+      <text x="22" y="12" class="legend-text">Exact Hit (34.0%)</text>
+      
+      <circle cx="8" cy="30" r="5" fill="#06b6d4"/>
+      <text x="22" y="34" class="legend-text">Semantic Hit (21.8%)</text>
+      
+      <circle cx="8" cy="52" r="5" fill="#475569"/>
+      <text x="22" y="56" class="legend-text">Cache Miss (44.2%)</text>
+    </g>
+    
+
+    <g transform="translate(110, 485)">
+      <line x1="0" y1="8" x2="22" y2="8" stroke="#06b6d4" stroke-width="3"/>
+      <circle cx="11" cy="8" r="4" fill="#06b6d4"/>
+      <text x="30" y="11" class="legend-text">Cache Hit Rate (%)</text>
+      
+      <line x1="200" y1="8" x2="222" y2="8" stroke="#10b981" stroke-width="3"/>
+      <circle cx="211" cy="8" r="4" fill="#10b981"/>
+      <text x="230" y="11" class="legend-text">Intent Precision (0% False Positives &gt; 0.92)</text>
+    </g>
+    
+</svg>
