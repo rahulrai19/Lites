@@ -1196,3 +1196,94 @@ body {
   border-color: #ef4444;
   color: #ff8080;
 }
+
+/* Fix: Make play-orb 100% invisible when playing, and never block text */
+.video-screen.is-playing .play-orb {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.7) !important;
+}
+
+.video-screen.is-paused .play-orb {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+
+.video-screen.is-paused:hover .play-orb {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+/* Height and padding fix for split view to eliminate vertical clipping */
+.video-screen.video-screen-enhanced {
+  min-height: 410px !important;
+  height: auto !important;
+  aspect-ratio: unset !important;
+}
+
+.video-screen.video-screen-enhanced .video-canvas-content {
+  position: relative !important;
+  min-height: 410px !important;
+  padding: 1rem 1.25rem 0.65rem 1.25rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+}
+
+/* Fullscreen styling support */
+.video-glass-card:fullscreen,
+.video-glass-card:-webkit-full-screen,
+.video-glass-card:-moz-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: #070c14 !important;
+  padding: 1.5rem 3rem !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.video-glass-card:fullscreen .video-screen,
+.video-glass-card:-webkit-full-screen .video-screen {
+  flex: 1 !important;
+  min-height: calc(100vh - 120px) !important;
+}
+
+.video-glass-card:fullscreen .video-split-container,
+.video-glass-card:-webkit-full-screen .video-split-container {
+  gap: 1.5rem !important;
+}
+
+/* Pipeline Breadcrumb in Engine Window */
+.pipeline-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.65rem;
+}
+
+.pipeline-step {
+  color: #64748b;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pipeline-step.active {
+  color: #38bdf8;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+
+.pipeline-arrow {
+  color: #475569;
+  font-size: 0.6rem;
+}
